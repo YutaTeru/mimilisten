@@ -12,13 +12,16 @@ param(
   [switch]$SetupBucket,
   [switch]$SetCors,
   [switch]$EnableR2DevUrl,
-  [switch]$SkipLoginCheck
+  [switch]$SkipLoginCheck,
+  [switch]$Verify,
+  [int]$VerifyTimeout = 10
 )
 
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $CheckScript = Join-Path $ProjectRoot "tools\check-audio-cloudflare-ready.ps1"
 $SyncScript = Join-Path $ProjectRoot "tools\sync-audio-to-cloudflare.ps1"
+$VerifyScript = Join-Path $ProjectRoot "tools\verify-audio-cloudflare.ps1"
 
 if ($Full) {
   $EffectiveLimitFiles = 0
@@ -84,4 +87,12 @@ Write-Host "Step 2/2: audio sync" -ForegroundColor Cyan
 & $SyncScript @syncParams
 if ($LASTEXITCODE -ne 0) {
   exit $LASTEXITCODE
+}
+
+if ($Verify) {
+  Write-Host "Step 3/3: public URL verify" -ForegroundColor Cyan
+  & $VerifyScript -Timeout $VerifyTimeout
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
 }

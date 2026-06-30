@@ -61,10 +61,22 @@ Cloudflareログイン後、まず3件だけ実アップロードする場合:
 powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json -Upload
 ```
 
+3件アップロード後に、公開URLまで確認する場合:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json -Upload -Verify
+```
+
 全件を反映する場合は、3件テストとCloudflare使用量確認のあとに `-Full` を付けます。
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json -Full -Upload
+```
+
+全件反映後に公開URLも確認する場合:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json -Full -Upload -Verify
 ```
 
 まずは必ずドライランします。

@@ -15,6 +15,9 @@ try {
   }
 
   python tools\verify_audio_urls.py --manifest $Manifest --timeout $Timeout
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
 }
 finally {
   Pop-Location
