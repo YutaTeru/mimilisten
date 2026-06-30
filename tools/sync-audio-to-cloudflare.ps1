@@ -11,7 +11,9 @@ param(
   [switch]$EnableR2DevUrl,
   [int]$MaxMB = 100,
   [int]$MaxFiles = 200,
-  [int]$LimitFiles = 0
+  [int]$LimitFiles = 0,
+  [string]$BackupJsonDir = "",
+  [switch]$NoJsonBackup
 )
 
 $ErrorActionPreference = "Stop"
@@ -98,6 +100,12 @@ try {
   }
   if ($AllowJsonOnly) {
     $argsList += "--allow-json-only"
+  }
+  if ($BackupJsonDir) {
+    $argsList += @("--backup-json-dir", $BackupJsonDir)
+  }
+  if ($NoJsonBackup) {
+    $argsList += "--no-json-backup"
   }
   if ($Upload) {
     $argsList += "--upload"

@@ -14,7 +14,9 @@ param(
   [switch]$EnableR2DevUrl,
   [switch]$SkipLoginCheck,
   [switch]$Verify,
-  [int]$VerifyTimeout = 10
+  [int]$VerifyTimeout = 10,
+  [string]$BackupJsonDir = "",
+  [switch]$NoJsonBackup
 )
 
 $ErrorActionPreference = "Stop"
@@ -81,6 +83,12 @@ if ($Upload) {
 }
 if ($UpdateJson) {
   $syncParams.UpdateJson = $true
+}
+if ($BackupJsonDir) {
+  $syncParams.BackupJsonDir = $BackupJsonDir
+}
+if ($NoJsonBackup) {
+  $syncParams.NoJsonBackup = $true
 }
 
 Write-Host "Step 2/2: audio sync" -ForegroundColor Cyan

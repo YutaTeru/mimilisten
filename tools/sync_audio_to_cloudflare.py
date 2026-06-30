@@ -1,4 +1,5 @@
 import argparse
+from datetime import datetime
 import json
 import mimetypes
 import os
@@ -20,6 +21,7 @@ DEFAULT_MAX_BYTES = 100 * 1024 * 1024
 DEFAULT_MAX_FILES = 200
 AUDIO_FIELDS = {"audioUrl", "sentenceAudioUrl", "monologueAudioUrl"}
 DATA_FILES = [Path("data/questions.json"), Path("data/long-listening.json")]
+DEFAULT_JSON_BACKUP_DIR = Path("tools/audio-json-backups")
 SOURCE_FOLDERS = {
     "chunks": ["チャンク集", "chunks"],
     "sentences": ["文", "sentences"],
@@ -42,6 +44,15 @@ def load_json(path: Path):
 
 def save_json(path: Path, data):
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def backup_json_file(root: Path, path: Path, backup_dir: Path, timestamp: str) -> Path:
+    target_root = backup_dir if backup_dir.is_absolute() else root / backup_dir
+    relative = path.relative_to(root)
+    target = target_root / timestamp / relative
+    target.parent.mkdir(parents=True, exist_ok=True)
+    shutil.copy2(path, target)
+    return target
 
 
 def is_audio_value(value: str) -> bool:
@@ -215,6 +226,8 @@ def main():
     parser.add_argument("--set-cors", action="store_true", help="Apply cloudflare/r2-cors.public-read.json.")
     parser.add_argument("--update-json", action="store_true", help="Rewrite data JSON audio URLs to the public base URL.")
     parser.add_argument("--allow-json-only", action="store_true", help="Allow --update-json without --upload after files are already uploaded.")
+    parser.add_argument("--backup-json-dir", type=Path, default=DEFAULT_JSON_BACKUP_DIR)
+    parser.add_argument("--no-json-backup", action="store_true", help="Do not create JSON backups before --update-json writes files.")
     parser.add_argument("--write-manifest", type=Path, help="Write a local upload manifest JSON.")
     parser.add_argument("--limit-files", type=int, default=0, help="Process only the first N audio refs for a small test run.")
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
@@ -303,6 +316,7 @@ def main():
             print("Use --allow-json-only only after confirming the files already exist on Cloudflare.")
             return 6
         allowed_keys = {item["key"] for item in plan}
+        backup_timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         for data_file in DATA_FILES:
             path = root / data_file
             if not path.exists():
@@ -310,6 +324,9 @@ def main():
             data = load_json(path)
             count = update_audio_urls(data, args.public_base_url, allowed_keys)
             if count:
+                if not args.no_json_backup:
+                    backup_path = backup_json_file(root, path, args.backup_json_dir, backup_timestamp)
+                    print(f"Backed up {data_file}: {backup_path}")
                 save_json(path, data)
             print(f"Updated {data_file}: {count} URLs")
 

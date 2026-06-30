@@ -145,6 +145,8 @@ JSONの音源URLもCloudflare URLへ切り替える場合:
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -Upload -UpdateJson
 ```
 
+`-UpdateJson` で `data/questions.json` などを書き換える時は、標準で `tools/audio-json-backups/` に変更前のJSONを保存します。このバックアップはGitHubには入りません。
+
 既にCloudflareへアップロード済みで、JSONだけ後から切り替える場合は、確認済みの時だけ `-AllowJsonOnly` を使います。
 
 ```powershell

@@ -9,4 +9,5 @@ dist/
 __pycache__/
 *.pyc
 tools/audio-sync-preview.json
+tools/audio-json-backups/
 cloudflare/audio-sync.local.json
