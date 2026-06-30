@@ -147,6 +147,18 @@ powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -Pub
 
 `-UpdateJson` で `data/questions.json` などを書き換える時は、標準で `tools/audio-json-backups/` に変更前のJSONを保存します。このバックアップはGitHubには入りません。
 
+JSON切り替え後に戻したい場合は、まず復元内容を確認します。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\restore-audio-json-backup.ps1
+```
+
+問題なければ、最新バックアップから復元します。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\restore-audio-json-backup.ps1 -Restore
+```
+
 既にCloudflareへアップロード済みで、JSONだけ後から切り替える場合は、確認済みの時だけ `-AllowJsonOnly` を使います。
 
 ```powershell
