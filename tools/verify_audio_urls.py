@@ -1,0 +1,104 @@
+import argparse
+import json
+import sys
+from pathlib import Path
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
+
+AUDIO_FIELDS = {"audioUrl", "sentenceAudioUrl", "monologueAudioUrl"}
+DATA_FILES = [Path("data/questions.json"), Path("data/long-listening.json")]
+
+
+def project_root() -> Path:
+    return Path(__file__).resolve().parents[1]
+
+
+def walk_audio_urls(node):
+    if isinstance(node, dict):
+        for key, value in node.items():
+            if key in AUDIO_FIELDS and isinstance(value, str):
+                yield value
+            else:
+                yield from walk_audio_urls(value)
+    elif isinstance(node, list):
+        for item in node:
+            yield from walk_audio_urls(item)
+
+
+def collect_urls(root: Path):
+    urls = []
+    for data_file in DATA_FILES:
+        path = root / data_file
+        if not path.exists():
+            continue
+        data = json.loads(path.read_text(encoding="utf-8"))
+        urls.extend(walk_audio_urls(data))
+    return sorted(set(urls))
+
+
+def collect_manifest_urls(root: Path, manifest_path: Path):
+    path = manifest_path if manifest_path.is_absolute() else root / manifest_path
+    data = json.loads(path.read_text(encoding="utf-8"))
+    urls = []
+    for item in data:
+        url = item.get("url", "")
+        if url:
+            urls.append(url)
+    return sorted(set(urls))
+
+
+def check_url(url: str, timeout: int):
+    if not url.startswith(("http://", "https://")):
+        return {"url": url, "ok": False, "status": "local", "message": "not a public URL"}
+    request = Request(url, method="HEAD")
+    try:
+        with urlopen(request, timeout=timeout) as response:
+            content_type = response.headers.get("Content-Type", "")
+            content_length = response.headers.get("Content-Length", "")
+            ok = 200 <= response.status < 400 and content_type.startswith("audio/")
+            return {
+                "url": url,
+                "ok": ok,
+                "status": response.status,
+                "contentType": content_type,
+                "contentLength": content_length,
+            }
+    except HTTPError as error:
+        return {"url": url, "ok": False, "status": error.code, "message": error.reason}
+    except URLError as error:
+        return {"url": url, "ok": False, "status": "network_error", "message": str(error.reason)}
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Verify public audio URLs from app JSON files.")
+    parser.add_argument("--manifest", type=Path, help="Verify URLs from an audio sync manifest instead of app JSON.")
+    parser.add_argument("--timeout", type=int, default=10)
+    args = parser.parse_args()
+
+    root = project_root()
+    urls = collect_manifest_urls(root, args.manifest) if args.manifest else collect_urls(root)
+    if not urls:
+        print("No audio URLs found.")
+        return 1
+
+    failed = []
+    for url in urls:
+        result = check_url(url, args.timeout)
+        marker = "OK" if result["ok"] else "NG"
+        detail = result.get("contentType") or result.get("message", "")
+        print(f"{marker} {result['status']} {url} {detail}")
+        if not result["ok"]:
+            failed.append(result)
+
+    print(f"\nChecked: {len(urls)} / Failed: {len(failed)}")
+    return 1 if failed else 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

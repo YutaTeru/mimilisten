@@ -100,6 +100,7 @@ const els = {
   typesButton: document.getElementById("typesButton"),
   typesBackButton: document.getElementById("typesBackButton"),
   practiceBackButton: document.getElementById("practiceBackButton"),
+  practiceStepBackButton: document.getElementById("practiceStepBackButton"),
   practiceTitle: document.getElementById("practiceTitle"),
   practiceTypeChooser: document.getElementById("practiceTypeChooser"),
   practiceWorkArea: document.getElementById("practiceWorkArea"),
@@ -880,8 +881,11 @@ function showPracticeChooser() {
   practiceEntryMode = "select";
   practiceDisplayMode = "chunk";
   kanaAnswerVisible = false;
+  screens.practice.classList.remove("is-practicing");
   els.practiceTitle.textContent = "練習タイプを選ぶ";
   els.practiceProgressText.textContent = "選択";
+  els.practiceBackButton.textContent = "ホーム";
+  els.practiceStepBackButton.hidden = true;
   els.practiceTypeChooser.hidden = false;
   els.practiceWorkArea.hidden = true;
   els.practiceWorkArea.classList.remove("exercise-mode");
@@ -913,7 +917,10 @@ function startPracticeEntry(entryMode) {
   currentPracticeIndex = 0;
   practiceDisplayMode = defaultPracticeDisplayMode();
   kanaAnswerVisible = false;
+  screens.practice.classList.add("is-practicing");
   els.practiceTitle.textContent = PRACTICE_ENTRY_LABELS[entryMode] || "練習モード";
+  els.practiceBackButton.textContent = "ホーム";
+  els.practiceStepBackButton.hidden = false;
   els.practiceTypeChooser.hidden = true;
   els.practiceWorkArea.hidden = false;
   els.practiceWorkArea.classList.add("exercise-mode");
@@ -1039,7 +1046,7 @@ function handlePracticeFocusClick(event) {
     if (!isCorrect) quizAnswerButton.classList.add("is-wrong");
     const feedback = quizRoot.querySelector("[data-practice-feedback]");
     feedback.hidden = false;
-    feedback.textContent = isCorrect ? "正解です。音の変化を見て確認しましょう。" : "もう一歩。正解の形と聞こえ方を確認しましょう。";
+    feedback.textContent = isCorrect ? "正解" : "正解と聞こえ方を確認";
     const detail = quizRoot.querySelector("[data-practice-detail]");
     if (detail) detail.hidden = false;
     return;
@@ -1184,13 +1191,10 @@ els.backHomeButton.addEventListener("click", () => {
   showScreen("home");
 });
 els.practiceBackButton.addEventListener("click", () => {
-  if (!els.practiceWorkArea.hidden) {
-    showPracticeChooser();
-    return;
-  }
   updateHome();
   showScreen("home");
 });
+els.practiceStepBackButton.addEventListener("click", showPracticeChooser);
 els.playButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl));
 els.slowButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl, Math.min(currentPlaybackRate(), 0.75)));
 els.replayButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl));
