@@ -86,7 +86,13 @@ def response_result(url: str, response, method: str, sample: bytes = b""):
 
 
 def try_request(url: str, timeout: int, method: str, headers: dict[str, str] | None = None, read_sample: bool = False):
-    request = Request(url, headers=headers or {}, method=method)
+    request_headers = {
+        "User-Agent": "MimiListenAudioVerifier/1.0",
+        "Accept": "audio/*,*/*;q=0.8",
+    }
+    if headers:
+        request_headers.update(headers)
+    request = Request(url, headers=request_headers, method=method)
     with urlopen(request, timeout=timeout) as response:
         sample = response.read(64) if read_sample else b""
         return response_result(url, response, method, sample)
