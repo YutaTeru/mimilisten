@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="日本語母語話者が英語リスニングの音変化を練習できるドリルアプリです。" />
+    <meta name="theme-color" content="#eef5ff" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="聞こえない英語ドリル" />
+    <title>聞こえない英語ドリル</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="./assets/app-icon-1024.png" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section id="homeScreen" class="screen is-active" aria-labelledby="appTitle">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">英検リスニング対策</p>
+            <h1 id="appTitle">聞こえない英語ドリル</h1>
+          </div>
+          <div class="topbar-actions">
+            <span class="round-chip">Round 2</span>
+            <details class="settings-menu" id="settingsMenu">
+              <summary class="settings-trigger" aria-label="設定を開く">
+                <span aria-hidden="true">⚙</span>
+              </summary>
+              <div class="settings-panel">
+                <details class="speed-panel speed-control" id="speedControl">
+                  <summary class="speed-summary" aria-labelledby="speedTitle">
+                    <span>
+                      <span class="panel-label" id="speedTitle">再生スピード</span>
+                      <span id="speedLabel" class="speed-label">通常</span>
+                    </span>
+                    <span id="speedValue" class="speed-value">1.00x</span>
+                  </summary>
+                  <div class="speed-control-body">
+                    <div class="speed-stepper" role="group" aria-label="再生スピードを0.05刻みで調整">
+                      <button id="speedDownButton" class="speed-icon-button" type="button" aria-label="0.05遅くする">−</button>
+                      <input id="speedRange" class="speed-range" type="range" min="0.65" max="1" step="0.05" value="1" aria-label="再生スピード" />
+                      <button id="speedUpButton" class="speed-icon-button" type="button" aria-label="0.05速くする">＋</button>
+                    </div>
+                    <div class="speed-buttons speed-presets" role="group" aria-label="再生スピードの目安">
+                      <button class="speed-button is-active" type="button" data-rate="1">通常</button>
+                      <button class="speed-button" type="button" data-rate="0.85">少し</button>
+                      <button class="speed-button" type="button" data-rate="0.7">かなり</button>
+                    </div>
+                    <p id="speedHint" class="speed-hint">0.05刻みで調整できます。</p>
+                  </div>
+                </details>
+                <button id="teacherReviewButton" class="secondary-action settings-action" type="button">
+                  <span>採用管理</span>
+                  <strong>講師レビュー</strong>
+                </button>
+              </div>
+            </details>
+          </div>
+        </header>
+
+        <section class="training-panel hero-panel">
+          <div class="hero-copy">
+            <p class="panel-label">今日のテスト</p>
+            <h2>聞こえた英語はどれ？</h2>
+            <p id="homeMeta" class="muted">読み込み中</p>
+          </div>
+          <img class="mascot mascot-home" src="./assets/guardians/dawnfang.png" alt="" aria-hidden="true" />
+          <button id="startButton" class="primary-action" type="button">今日の5問を始める</button>
+        </section>
+
+        <div class="home-actions home-bento">
+          <button id="practiceButton" class="secondary-action mode-card" type="button">
+            <span>文字あり</span>
+            <strong>練習モード</strong>
+            <img class="mode-guardian" src="./assets/guardians/nav-guardian.png" alt="" aria-hidden="true" />
+          </button>
+          <button id="reviewButton" class="secondary-action mode-card" type="button">
+            <span>ミスした音</span>
+            <strong>苦手だけ復習</strong>
+            <img class="mode-guardian" src="./assets/guardians/mossback.png" alt="" aria-hidden="true" />
+          </button>
+          <button id="typesButton" class="secondary-action mode-card" type="button">
+            <span>6分類</span>
+            <strong>音変化タイプ</strong>
+            <img class="mode-guardian" src="./assets/guardians/crystalclaw.png" alt="" aria-hidden="true" />
+          </button>
+          <section class="status-strip home-stat-card" aria-label="学習データ">
+            <img class="mode-guardian stat-guardian" src="./assets/guardians/tidefin.png" alt="" aria-hidden="true" />
+            <div>
+              <span class="stat-number" id="approvedCount">0</span>
+              <span class="stat-label">採用済み</span>
+            </div>
+            <div>
+              <span class="stat-number" id="mistakeCount">0</span>
+              <span class="stat-label">苦手記録</span>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="drillScreen" class="screen" aria-labelledby="questionTitle">
+        <header class="drill-header">
+          <button id="backHomeButton" class="text-button" type="button">ホーム</button>
+          <div class="progress-wrap" aria-label="進捗">
+            <div id="progressBar" class="progress-bar"></div>
+          </div>
+          <span id="progressText" class="progress-text">1/5</span>
+        </header>
+
+        <section class="question-card">
+          <div class="question-meta">
+            <span id="soundBadge" class="sound-badge">連結</span>
+            <span id="weaknessLabel" class="weakness-label">it連結</span>
+          </div>
+          <h2 id="questionTitle">聞こえた英語はどれ？</h2>
+          <img class="mascot mascot-listening-card" src="./assets/guardians/raptor.png" alt="" aria-hidden="true" />
+
+          <div class="audio-row" aria-label="音声操作">
+            <button id="playButton" class="audio-button" type="button">通常</button>
+            <button id="slowButton" class="audio-button subtle" type="button">ゆっくり</button>
+          </div>
+
+          <div id="choiceList" class="choice-list"></div>
+        </section>
+
+        <section id="feedbackPanel" class="feedback-panel" hidden>
+          <img class="mascot mascot-feedback" src="./assets/guardians/crystalclaw.png" alt="" aria-hidden="true" />
+          <div class="feedback-title" id="feedbackTitle">正解</div>
+          <p id="diagnosisText" class="diagnosis"></p>
+          <dl class="explain-list">
+            <div>
+              <dt>英語</dt>
+              <dd id="answerText"></dd>
+            </div>
+            <div>
+              <dt>見える化</dt>
+              <dd id="visibleText"></dd>
+            </div>
+            <div>
+              <dt>カナ補助</dt>
+              <dd id="kanaText"></dd>
+            </div>
+          </dl>
+          <p id="pointText" class="point-text"></p>
+          <div class="feedback-actions">
+            <button id="replayButton" class="secondary-action compact" type="button">もう一度聞く</button>
+            <button id="sentenceButton" class="secondary-action compact" type="button">文で聞く</button>
+            <button id="nextButton" class="primary-action compact" type="button">次へ</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="resultScreen" class="screen" aria-labelledby="resultTitle">
+        <header class="result-header">
+          <p class="eyebrow">結果</p>
+          <h2 id="resultTitle">5問終了</h2>
+        </header>
+        <section class="score-card">
+          <img class="mascot mascot-result" src="./assets/guardians/emberhorn.png" alt="" aria-hidden="true" />
+          <span id="scoreText" class="score-text">0/5</span>
+          <p id="scoreNote" class="muted"></p>
+        </section>
+        <section>
+          <h3>今日の苦手</h3>
+          <div id="weaknessList" class="tag-list"></div>
+        </section>
+        <div class="home-actions">
+          <button id="resultReviewButton" class="secondary-action" type="button">苦手だけ復習する</button>
+          <button id="retryButton" class="primary-action" type="button">もう一度やる</button>
+        </div>
+      </section>
+
+      <section id="typesScreen" class="screen" aria-labelledby="typesTitle">
+        <header class="drill-header">
+          <button id="typesBackButton" class="text-button" type="button">ホーム</button>
+        </header>
+        <p class="eyebrow">音変化タイプ</p>
+        <h2 id="typesTitle">6つの分類</h2>
+        <div id="typeList" class="type-list"></div>
+      </section>
+
+      <section id="practiceScreen" class="screen" aria-labelledby="practiceTitle">
+        <header class="drill-header">
+          <button id="practiceBackButton" class="text-button" type="button">ホーム</button>
+          <span id="practiceProgressText" class="progress-text">1/5</span>
+        </header>
+        <div class="practice-title-row">
+          <div>
+            <p class="eyebrow">練習モード</p>
+            <h2 id="practiceTitle">文字と音を一致させる</h2>
+          </div>
+          <img class="mascot mascot-practice" src="./assets/guardians/mossback.png" alt="" aria-hidden="true" />
+        </div>
+
+        <section id="practiceTypeChooser" class="practice-type-panel">
+          <p class="panel-label">練習を選ぶ</p>
+          <div class="practice-type-grid">
+            <button class="practice-type-card" type="button" data-practice-entry="heard">
+              <span>4択</span>
+              <strong>聞こえた英語はどれ？</strong>
+            </button>
+            <button class="practice-type-card" type="button" data-practice-entry="kana">
+              <span>音を予測</span>
+              <strong>カナを予測する</strong>
+            </button>
+            <button class="practice-type-card" type="button" data-practice-entry="restore">
+              <span>逆変換</span>
+              <strong>元の英語に戻す</strong>
+            </button>
+            <button class="practice-type-card" type="button" data-practice-entry="missing">
+              <span>脱落</span>
+              <strong>消えた音を探す</strong>
+            </button>
+            <button class="practice-type-card" type="button" data-practice-entry="find">
+              <span>文の中</span>
+              <strong>文の中から探す</strong>
+            </button>
+          </div>
+        </section>
+
+        <div id="practiceWorkArea" hidden>
+        <section class="practice-card">
+          <div class="question-meta">
+            <span id="practiceSoundBadge" class="sound-badge">連結</span>
+            <span id="practiceWeaknessLabel" class="weakness-label">it連結</span>
+          </div>
+          <h3 id="practiceAnswerText">pick it up</h3>
+          <dl class="explain-list">
+            <div>
+              <dt>見える化</dt>
+              <dd id="practiceVisibleText"></dd>
+            </div>
+            <div>
+              <dt>カナ補助</dt>
+              <dd id="practiceKanaText"></dd>
+            </div>
+          </dl>
+          <p id="practicePointText" class="point-text"></p>
+          <div class="practice-actions">
+            <button id="practiceChunkButton" class="audio-button" type="button">チャンクを聞く</button>
+            <button id="practiceSentenceButton" class="audio-button subtle" type="button">文で聞く</button>
+            <button id="practiceMonoButton" class="audio-button subtle" type="button">モノローグで聞く</button>
+            <button id="practiceKanaButton" class="audio-button subtle" type="button">カナ予測</button>
+          </div>
+          <div id="practiceFocusPanel" class="practice-focus-panel" aria-live="polite">
+            <p id="practiceFocusLabel" class="panel-label">チャンク</p>
+            <div id="practiceFocusContent" class="practice-focus-content"></div>
+          </div>
+          <div class="feedback-actions">
+            <button id="practicePrevButton" class="secondary-action compact" type="button">前へ</button>
+            <button id="practiceNextButton" class="primary-action compact" type="button">次へ</button>
+          </div>
+        </section>
+
+        <section class="practice-card" hidden>
+          <p class="panel-label">カタカナ予測</p>
+          <h3>自然な会話ではどう聞こえやすい？</h3>
+          <p id="kanaPromptText" class="prediction-prompt"></p>
+          <div id="kanaChoiceList" class="choice-list"></div>
+          <div id="kanaFeedbackPanel" class="feedback-panel inline-feedback" hidden>
+            <div id="kanaFeedbackTitle" class="feedback-title">正解</div>
+            <p id="kanaFeedbackText" class="diagnosis"></p>
+            <p id="kanaFeedbackPoint" class="point-text"></p>
+            <button id="kanaPlayButton" class="secondary-action compact" type="button">音声で確認</button>
+          </div>
+        </section>
+
+        <section class="practice-card long-practice-card" hidden>
+          <div class="long-header">
+            <div>
+              <p class="panel-label">長めモノローグ</p>
+              <h3 id="longTitle">読み込み中</h3>
+            </div>
+            <button id="longPlayButton" class="audio-button compact-audio" type="button">聞く</button>
+          </div>
+          <img class="mascot mascot-long" src="./assets/guardians/wild-header.png" alt="" aria-hidden="true" />
+          <p id="longPointText" class="point-text"></p>
+          <div class="long-toggle" role="group" aria-label="長めモノローグ表示">
+            <button id="longTranscriptButton" class="speed-button is-active" type="button">全文を見る</button>
+            <button id="longChunksButton" class="speed-button" type="button">チャンクだけ</button>
+          </div>
+          <p id="longMeaningText" class="chunk-meaning-line" aria-live="polite"></p>
+          <div id="longContent" class="long-content"></div>
+        </section>
+        </div>
+      </section>
+
+      <section id="teacherScreen" class="screen" aria-labelledby="teacherTitle">
+        <header class="drill-header">
+          <button id="teacherBackButton" class="text-button" type="button">ホーム</button>
+          <button id="exportReviewButton" class="text-button" type="button">レビュー結果を書き出す</button>
+        </header>
+        <p class="eyebrow">講師レビュー</p>
+        <h2 id="teacherTitle">採用する問題を選ぶ</h2>
+        <p id="teacherSummary" class="muted">読み込み中</p>
+        <p class="review-note">不採用にした問題は、この端末では今日の5問にも苦手復習にも出ません。音源ファイルは残るので、あとから採用に戻せます。</p>
+        <div id="teacherList" class="teacher-list"></div>
+      </section>
+    </main>
+
+    <audio id="audioPlayer" preload="auto"></audio>
+    <script src="./app.js" defer></script>
+  </body>
+</html>

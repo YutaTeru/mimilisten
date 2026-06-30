@@ -1,0 +1,277 @@
+[
+  {
+    "id": "round2-chunk001",
+    "roundId": "2",
+    "questionType": "similar_choice",
+    "reviewStatus": "approved",
+    "qualityStatus": "unchecked",
+    "soundType": "連結",
+    "weaknessTag": "it連結",
+    "audioUrl": "audio/chunks/round-2/chunk001.mp3",
+    "answer": "pick it up",
+    "visibleForm": "pikiɾup",
+    "kana": "ピキラップ",
+    "point": "pick と it がつながり、it が弱く短く聞こえます。",
+    "choices": [
+      {
+        "text": "pick it up",
+        "correct": true
+      },
+      {
+        "text": "pick up",
+        "correct": false,
+        "weaknessTag": "it連結",
+        "reason": "it が聞こえていない"
+      },
+      {
+        "text": "put it up",
+        "correct": false,
+        "weaknessTag": "子音聞き分け",
+        "reason": "pick / put を聞き違えている"
+      },
+      {
+        "text": "pick them up",
+        "correct": false,
+        "weaknessTag": "弱形代名詞",
+        "reason": "it / them を聞き違えている"
+      }
+    ],
+    "sentenceAudioUrl": "audio/sentences/round-2/sentence002.mp3",
+    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "practiceText": "pick it up",
+    "sentenceText": "Could you pick it up after school?",
+    "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
+    "targetChunk": "pick it up",
+    "meaningJa": "それを拾う / 受け取る",
+    "answerKana": "ピキラップ",
+    "kanaChoices": [
+      "ピキラップ",
+      "ピック アップ",
+      "プティラップ",
+      "ピック ゼム アップ"
+    ],
+    "highlightChunks": [
+      "pick it up"
+    ]
+  },
+  {
+    "id": "round2-chunk002",
+    "roundId": "2",
+    "questionType": "similar_choice",
+    "reviewStatus": "approved",
+    "qualityStatus": "unchecked",
+    "soundType": "連結",
+    "weaknessTag": "it連結",
+    "audioUrl": "audio/chunks/round-2/chunk002.mp3",
+    "answer": "fill it out",
+    "visibleForm": "filiɾout",
+    "kana": "フィリラウト",
+    "point": "fill it out は3語でも、会話では1つの音の塊に近く聞こえます。",
+    "choices": [
+      {
+        "text": "fill it out",
+        "correct": true
+      },
+      {
+        "text": "fill out",
+        "correct": false,
+        "weaknessTag": "it連結",
+        "reason": "it が短くなって聞こえていない"
+      },
+      {
+        "text": "feel it out",
+        "correct": false,
+        "weaknessTag": "母音聞き分け",
+        "reason": "fill / feel を聞き違えている"
+      },
+      {
+        "text": "fill them out",
+        "correct": false,
+        "weaknessTag": "弱形代名詞",
+        "reason": "it / them を聞き違えている"
+      }
+    ],
+    "sentenceAudioUrl": "audio/sentences/round-2/sentence003.mp3",
+    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "practiceText": "fill it out",
+    "sentenceText": "Please fill it out before you leave.",
+    "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
+    "targetChunk": "fill it out",
+    "meaningJa": "記入する",
+    "answerKana": "フィリラウト",
+    "kanaChoices": [
+      "フィリラウト",
+      "フィル アウト",
+      "フィール イット アウト",
+      "フィル ゼム アウト"
+    ],
+    "highlightChunks": [
+      "fill it out"
+    ]
+  },
+  {
+    "id": "round2-chunk003",
+    "roundId": "2",
+    "questionType": "similar_choice",
+    "reviewStatus": "approved",
+    "qualityStatus": "unchecked",
+    "soundType": "同化",
+    "weaknessTag": "you同化",
+    "audioUrl": "audio/chunks/round-2/chunk003.mp3",
+    "answer": "did you check?",
+    "visibleForm": "didʒə CHECK?",
+    "kana": "ディジャ チェック",
+    "point": "did you は didʒə のようにつながり、you がはっきり聞こえにくくなります。",
+    "choices": [
+      {
+        "text": "did you check?",
+        "correct": true
+      },
+      {
+        "text": "do you check?",
+        "correct": false,
+        "weaknessTag": "時制聞き分け",
+        "reason": "did / do の弱い差を落としている"
+      },
+      {
+        "text": "did he check?",
+        "correct": false,
+        "weaknessTag": "you同化",
+        "reason": "you の弱化・同化を he と聞き違えている"
+      },
+      {
+        "text": "would you check?",
+        "correct": false,
+        "weaknessTag": "you同化",
+        "reason": "did you / would you のつながりを聞き違えている"
+      }
+    ],
+    "sentenceAudioUrl": "audio/sentences/round-2/sentence004.mp3",
+    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "practiceText": "did you check?",
+    "sentenceText": "Did you check it again?",
+    "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
+    "targetChunk": "did you",
+    "meaningJa": "〜しましたか / 〜した？",
+    "answerKana": "ディジャ チェック",
+    "kanaChoices": [
+      "ディジャ チェック",
+      "ディド ユー チェック",
+      "ドゥ ユー チェック",
+      "ディド ヒー チェック"
+    ],
+    "highlightChunks": [
+      "did you"
+    ]
+  },
+  {
+    "id": "round2-chunk004",
+    "roundId": "2",
+    "questionType": "similar_choice",
+    "reviewStatus": "approved",
+    "qualityStatus": "unchecked",
+    "soundType": "弱化",
+    "weaknessTag": "to弱化",
+    "audioUrl": "audio/chunks/round-2/chunk004.mp3",
+    "answer": "have to finish",
+    "visibleForm": "haftə FINish",
+    "kana": "ハフタ フィニッシュ",
+    "point": "have to は一語ずつではなく、hafta に近い弱い形で聞こえます。",
+    "choices": [
+      {
+        "text": "have to finish",
+        "correct": true
+      },
+      {
+        "text": "have finished",
+        "correct": false,
+        "weaknessTag": "to弱化",
+        "reason": "to の弱い音を落として別の形に聞いている"
+      },
+      {
+        "text": "had to finish",
+        "correct": false,
+        "weaknessTag": "機能語弱化",
+        "reason": "have to / had to の弱い差を聞き違えている"
+      },
+      {
+        "text": "has to finish",
+        "correct": false,
+        "weaknessTag": "機能語弱化",
+        "reason": "have / has の弱い差を聞き違えている"
+      }
+    ],
+    "sentenceAudioUrl": "audio/sentences/round-2/sentence001.mp3",
+    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "practiceText": "have to finish",
+    "sentenceText": "I have to finish this today.",
+    "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
+    "targetChunk": "have to",
+    "meaningJa": "〜しなければならない",
+    "answerKana": "ハフタ フィニッシュ",
+    "kanaChoices": [
+      "ハフタ フィニッシュ",
+      "ハブ トゥー フィニッシュ",
+      "ハブド フィニッシュ",
+      "ハズタ フィニッシュ"
+    ],
+    "highlightChunks": [
+      "have to"
+    ]
+  },
+  {
+    "id": "round2-chunk005",
+    "roundId": "2",
+    "questionType": "similar_choice",
+    "reviewStatus": "approved",
+    "qualityStatus": "unchecked",
+    "soundType": "脱落",
+    "weaknessTag": "t脱落",
+    "audioUrl": "audio/chunks/round-2/chunk005.mp3",
+    "answer": "next time",
+    "visibleForm": "nex(t) TIME",
+    "kana": "ネクス タイム",
+    "point": "next の t は次の t と重なり、かなり弱く聞こえることがあります。",
+    "choices": [
+      {
+        "text": "next time",
+        "correct": true
+      },
+      {
+        "text": "nice time",
+        "correct": false,
+        "weaknessTag": "t脱落",
+        "reason": "next の最後の音を落として聞いている"
+      },
+      {
+        "text": "next line",
+        "correct": false,
+        "weaknessTag": "語尾聞き分け",
+        "reason": "time / line の語尾を聞き違えている"
+      },
+      {
+        "text": "last time",
+        "correct": false,
+        "weaknessTag": "子音聞き分け",
+        "reason": "next / last の子音のまとまりを聞き違えている"
+      }
+    ],
+    "sentenceAudioUrl": "audio/sentences/round-2/sentence005.mp3",
+    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "practiceText": "next time",
+    "sentenceText": "We can talk about it next time.",
+    "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
+    "targetChunk": "next time",
+    "meaningJa": "次回 / 今度",
+    "answerKana": "ネクス タイム",
+    "kanaChoices": [
+      "ネクス タイム",
+      "ネクスト タイム",
+      "ナイス タイム",
+      "ラスト タイム"
+    ],
+    "highlightChunks": [
+      "next time"
+    ]
+  }
+]

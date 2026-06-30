@@ -1,0 +1,178 @@
+[
+  {
+    "id": "long001",
+    "roundId": "3",
+    "title": "Club Form and Online Submission",
+    "audioUrl": "audio/long-monologues/round-3/long001.mp3",
+    "durationSeconds": 38.4,
+    "transcript": "I have to finish the club form before tomorrow morning. First, I need to fill it out and check it again with my teacher. Could you look it up online and send it in if the website is working? I tried to do it last night, but the page would not open. Next time, I should start earlier and write it down before I forget. I also want to bring it over to the club room after school. If you get it from my desk, please put it in the blue folder. Did you check whether the meeting is still at a quarter past four? The information is important because another student is going to join us, and we have to make an appointment with the adviser.",
+    "visibleSummary": "I HAVEtə FINish / FILLiɾOUT / KUJJə LOOKiɾUP / SENDiɾIN / LAS(t) NIGHT / NEX(t) TIME / WRIɾitDOWN / BRINGiɾOVER / GEɾit / PUɾitIN / DIJə CHECK / INfərMAshən",
+    "kanaHints": [
+      "ハフタ フィニッシュ",
+      "フィリラウト",
+      "クッジャ ルキラップ",
+      "センディリン",
+      "ラス ナイト",
+      "ネクス タイム",
+      "ライリッダウン"
+    ],
+    "highlightChunks": [
+      "have to",
+      "fill it out",
+      "check it again",
+      "could you",
+      "look it up",
+      "send it in",
+      "last night",
+      "next time",
+      "write it down",
+      "bring it over",
+      "get it",
+      "put it in",
+      "did you",
+      "going to",
+      "make an appointment"
+    ],
+    "chunkMeanings": {
+      "have to": "〜しなければならない",
+      "fill it out": "記入する",
+      "check it again": "もう一度確認する",
+      "could you": "〜してくれますか",
+      "look it up": "調べる",
+      "send it in": "提出する / 送る",
+      "last night": "昨夜",
+      "next time": "次回 / 今度",
+      "write it down": "書き留める",
+      "bring it over": "持ってくる",
+      "get it": "それを取る / 受け取る",
+      "put it in": "それを入れる",
+      "did you": "〜しましたか / 〜した？",
+      "going to": "〜する予定",
+      "make an appointment": "予約する / 面談の約束をする"
+    },
+    "soundTypes": [
+      "弱化",
+      "連結",
+      "同化",
+      "脱落",
+      "フラッピング",
+      "強弱リズム"
+    ],
+    "point": "短いチャンクで練習した音変化が、長めの話の中で連続して出ます。全文を一語ずつ追うより、強い語と音の塊を先に拾います。",
+    "voice": "en-US-AriaNeural",
+    "cuePoints": [
+      {
+        "chunk": "have to",
+        "startIndex": 2,
+        "startSeconds": 0.25,
+        "endSeconds": 0.6,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "fill it out",
+        "startIndex": 73,
+        "startSeconds": 4.85,
+        "endSeconds": 5.463,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "check it again",
+        "startIndex": 89,
+        "startSeconds": 5.6,
+        "endSeconds": 6.25,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "could you",
+        "startIndex": 121,
+        "startSeconds": 7.963,
+        "endSeconds": 8.3,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "look it up",
+        "startIndex": 131,
+        "startSeconds": 8.312,
+        "endSeconds": 8.738,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "send it in",
+        "startIndex": 153,
+        "startSeconds": 9.4,
+        "endSeconds": 9.938,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "last night",
+        "startIndex": 208,
+        "startSeconds": 12.95,
+        "endSeconds": 13.525,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "next time",
+        "startIndex": 249,
+        "startSeconds": 16.0,
+        "endSeconds": 16.675,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "write it down",
+        "startIndex": 287,
+        "startSeconds": 18.137,
+        "endSeconds": 18.738,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "bring it over",
+        "startIndex": 333,
+        "startSeconds": 21.375,
+        "endSeconds": 21.913,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "get it",
+        "startIndex": 385,
+        "startSeconds": 24.6,
+        "endSeconds": 24.888,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "put it in",
+        "startIndex": 413,
+        "startSeconds": 26.137,
+        "endSeconds": 26.55,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "did you",
+        "startIndex": 440,
+        "startSeconds": 28.3,
+        "endSeconds": 28.625,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "going to",
+        "startIndex": 563,
+        "startSeconds": 34.962,
+        "endSeconds": 35.262,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "have to",
+        "startIndex": 588,
+        "startSeconds": 36.438,
+        "endSeconds": 36.763,
+        "source": "wordBoundary"
+      },
+      {
+        "chunk": "make an appointment",
+        "startIndex": 596,
+        "startSeconds": 36.775,
+        "endSeconds": 37.55,
+        "source": "wordBoundary"
+      }
+    ]
+  }
+]
