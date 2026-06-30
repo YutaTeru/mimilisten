@@ -35,6 +35,18 @@
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url>
 ```
 
+Cloudflareへ反映できる状態か、先に診断できます。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\check-audio-cloudflare-ready.ps1 -PublicBaseUrl https://<your-r2-dev-url>
+```
+
+実アップロード直前は、ログインとURLも必須として診断します。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\check-audio-cloudflare-ready.ps1 -PublicBaseUrl https://<your-r2-dev-url> -RequireLogin -RequirePublicBaseUrl
+```
+
 最初の接続テストでは、さらに小さく制限して確認できます。
 
 ```powershell
@@ -59,7 +71,7 @@ powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -Pub
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -LimitFiles 3 -MaxFiles 3 -MaxMB 5 -Upload -UpdateJson
 ```
 
-アップロードする場合だけ `--upload` を付けます。
+アップロードする場合だけ `-Upload` を付けます。
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -Upload
@@ -89,8 +101,8 @@ powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -Pub
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -SetupBucket -EnableR2DevUrl -SetCors -PublicBaseUrl https://<your-r2-dev-url> -Upload
 ```
 
-注意: `--upload` を付けない限り、Cloudflareには何も作成・送信しません。バケット作成やCORS設定もドライラン表示だけになります。
-また、`--upload` / `-Upload` などCloudflareへ実際に反映する操作は、Wranglerにログインしていない場合は送信前に止まります。
+注意: `-Upload` を付けない限り、Cloudflareには何も作成・送信しません。バケット作成やCORS設定もドライラン表示だけになります。
+また、`-Upload` などCloudflareへ実際に反映する操作は、Wranglerにログインしていない場合は送信前に止まります。
 
 Cloudflare URLへ切り替えたあと、音源URLが実際に読めるか確認します。
 
