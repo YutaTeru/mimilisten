@@ -3,7 +3,7 @@
 このアプリは、音源とアプリ本体を分けてCloudflareに反映します。
 
 - 音源: Cloudflare R2 `mimilisten-audio`
-- アプリ本体: Cloudflare Pages `mimilisten`
+- アプリ本体: Cloudflare Workers `mimilisten`
 - ソース管理: GitHub `YutaTeru/mimilisten`
 
 ## いつもの反映コマンド
@@ -21,14 +21,14 @@ powershell -ExecutionPolicy Bypass -File tools\publish-all-to-cloudflare.ps1
 3. `data/questions.json` と `data/long-listening.json` の音源URLをCloudflare URLへ更新する
 4. 公開URLで音源が読めるか検証する
 5. `dist` にアプリ本体だけをまとめる
-6. Cloudflare Pagesへデプロイする
+6. Cloudflare Workersへデプロイする
 
 ## アプリだけ反映する場合
 
 音源を増やしていないが、UIやテキストだけ変えた場合:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools\deploy-app-to-cloudflare.ps1
+powershell -ExecutionPolicy Bypass -File tools\deploy-worker-to-cloudflare.ps1
 ```
 
 ## 音源だけ確認したい場合
@@ -39,7 +39,8 @@ python tools\verify_audio_urls.py
 
 ## 公開URL
 
-- アプリ: https://mimilisten.pages.dev/
+- アプリ: https://mimilisten.itisnowornever271.workers.dev/
+- 旧Pages確認用: https://mimilisten.pages.dev/
 - 音源ベースURL: https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev
 
 ## 無料枠の確認場所

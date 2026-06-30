@@ -9,7 +9,7 @@ param(
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $AudioScript = Join-Path $ProjectRoot "tools\publish-audio-to-cloudflare.ps1"
-$DeployScript = Join-Path $ProjectRoot "tools\deploy-app-to-cloudflare.ps1"
+$DeployScript = Join-Path $ProjectRoot "tools\deploy-worker-to-cloudflare.ps1"
 
 Push-Location $ProjectRoot
 try {
@@ -31,8 +31,8 @@ try {
     }
   }
 
-  Write-Host "Step 2/2: deploy app text/data/assets to Cloudflare Pages" -ForegroundColor Cyan
-  & $DeployScript -ProjectName $ProjectName -Branch $Branch
+  Write-Host "Step 2/2: deploy app text/data/assets to Cloudflare Workers" -ForegroundColor Cyan
+  & $DeployScript
   if (-not $?) {
     exit 1
   }
