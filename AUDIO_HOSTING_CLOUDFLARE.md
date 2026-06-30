@@ -49,6 +49,24 @@ powershell -ExecutionPolicy Bypass -File tools\check-audio-cloudflare-ready.ps1 
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json
 ```
 
+普段は、診断から同期までをまとめた安全フローを使うとミスが少ないです。標準では3件だけのドライランになります。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json
+```
+
+Cloudflareログイン後、まず3件だけ実アップロードする場合:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json -Upload
+```
+
+全件を反映する場合は、3件テストとCloudflare使用量確認のあとに `-Full` を付けます。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\publish-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json -Full -Upload
+```
+
 まずは必ずドライランします。
 
 ```powershell
