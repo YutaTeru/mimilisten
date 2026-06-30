@@ -17,6 +17,7 @@ if hasattr(sys.stderr, "reconfigure"):
 DEFAULT_BUCKET = "mimilisten-audio"
 DEFAULT_CACHE_CONTROL = "public, max-age=31536000, immutable"
 DEFAULT_MAX_BYTES = 100 * 1024 * 1024
+DEFAULT_MAX_FILES = 200
 AUDIO_FIELDS = {"audioUrl", "sentenceAudioUrl", "monologueAudioUrl"}
 DATA_FILES = [Path("data/questions.json"), Path("data/long-listening.json")]
 SOURCE_FOLDERS = {
@@ -206,6 +207,7 @@ def main():
     parser.add_argument("--update-json", action="store_true", help="Rewrite data JSON audio URLs to the public base URL.")
     parser.add_argument("--write-manifest", type=Path, help="Write a local upload manifest JSON.")
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
+    parser.add_argument("--max-files", type=int, default=DEFAULT_MAX_FILES)
     parser.add_argument("--cache-control", default=DEFAULT_CACHE_CONTROL)
     args = parser.parse_args()
 
@@ -220,12 +222,17 @@ def main():
     print(f"Bucket: {args.bucket}")
     print(f"Mode: {'UPLOAD' if args.upload else 'DRY RUN'}")
     print(f"Files: {len(plan)} / Total: {total_bytes / 1024 / 1024:.3f} MB")
+    print(f"Safety limits: {args.max_files} files / {args.max_bytes / 1024 / 1024:.3f} MB")
 
     if missing:
         print("\nMissing audio sources:")
         for item in missing:
             print(f"  - {item}")
         return 2
+
+    if len(plan) > args.max_files:
+        print(f"\nAbort: file count exceeds safety limit ({args.max_files} files).")
+        return 5
 
     if total_bytes > args.max_bytes:
         print(f"\nAbort: upload size exceeds safety limit ({args.max_bytes} bytes).")

@@ -7,7 +7,8 @@ param(
   [switch]$UpdateJson,
   [switch]$SetCors,
   [switch]$EnableR2DevUrl,
-  [int]$MaxMB = 100
+  [int]$MaxMB = 100,
+  [int]$MaxFiles = 200
 )
 
 $ErrorActionPreference = "Stop"
@@ -28,6 +29,7 @@ try {
     "tools\sync_audio_to_cloudflare.py",
     "--bucket", $Bucket,
     "--max-bytes", "$MaxBytes",
+    "--max-files", "$MaxFiles",
     "--write-manifest", $ManifestPath
   )
 
@@ -59,7 +61,7 @@ try {
   if (-not $Upload) {
     Write-Host "DRY RUN: no Cloudflare changes will be made." -ForegroundColor Cyan
   } else {
-    Write-Host "UPLOAD: sending files to Cloudflare R2. Safety limit: MaxMB=$MaxMB." -ForegroundColor Yellow
+    Write-Host "UPLOAD: sending files to Cloudflare R2. Safety limits: MaxFiles=$MaxFiles MaxMB=$MaxMB." -ForegroundColor Yellow
   }
 
   if ($NeedsCloudflareAuth) {
@@ -72,6 +74,9 @@ try {
   }
 
   python @argsList
+  if ($LASTEXITCODE -ne 0) {
+    exit $LASTEXITCODE
+  }
 }
 finally {
   Pop-Location

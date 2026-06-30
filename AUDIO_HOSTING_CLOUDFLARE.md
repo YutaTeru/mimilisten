@@ -4,6 +4,20 @@
 
 音源はGitHubに入れず、Cloudflare側に置く方針でよいです。大量のMP3/WAVはリポジトリを重くしやすく、スマホアプリ更新のたびに音源も抱える構成は運用しにくくなります。
 
+## 無料運用を守るための前提
+
+コード側だけで「絶対に課金されない」と保証することはできません。Cloudflareの料金は、アカウントのプラン、R2の保存容量、読み取り回数、転送量、将来の設定変更に左右されます。
+
+そのため、このリポジトリでは次の安全策にしています。
+
+- 標準実行はドライランのみ。`-Upload` を付けない限りCloudflareには送信しない。
+- `-Upload`、`-SetupBucket`、`-EnableR2DevUrl`、`-SetCors` はWranglerログイン確認後だけ動く。
+- 標準で `MaxMB=100`、`MaxFiles=200` の上限をかける。
+- 音源ファイル本体はGitHubに入れない。
+- 最初は少量でテストし、Cloudflareダッシュボードで使用量を確認してから増やす。
+
+本当に無料枠内で運用するには、Cloudflare側でFreeプラン、R2使用量、課金アラート、不要な有料機能が有効になっていないことを確認してください。
+
 ## 推奨構成
 
 - アプリ本体: GitHub `YutaTeru/mimilisten`
@@ -19,6 +33,12 @@
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url>
+```
+
+最初の接続テストでは、さらに小さく制限して確認できます。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -MaxFiles 20 -MaxMB 20
 ```
 
 実アップロード前に、このPCでWranglerへログインしておきます。
