@@ -53,6 +53,12 @@ Cloudflareへ初めて送る時は、まず3件だけに絞ると安全です。
 powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -LimitFiles 3 -MaxFiles 3 -MaxMB 5 -Upload
 ```
 
+3件だけアップロードして、その3件だけアプリのJSONも切り替える場合:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -LimitFiles 3 -MaxFiles 3 -MaxMB 5 -Upload -UpdateJson
+```
+
 アップロードする場合だけ `--upload` を付けます。
 
 ```powershell
@@ -68,7 +74,13 @@ powershell -ExecutionPolicy Bypass -File tools\verify-audio-cloudflare.ps1
 JSONの音源URLもCloudflare URLへ切り替える場合:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -UpdateJson
+powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -Upload -UpdateJson
+```
+
+既にCloudflareへアップロード済みで、JSONだけ後から切り替える場合は、確認済みの時だけ `-AllowJsonOnly` を使います。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -UpdateJson -AllowJsonOnly
 ```
 
 一度にバケット作成、CORS設定、アップロードまで行う場合:

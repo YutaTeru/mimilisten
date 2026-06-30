@@ -81,7 +81,7 @@ def collect_audio_refs(data, public_base_url: str = "") -> set[str]:
     return refs
 
 
-def update_audio_urls(data, public_base_url: str) -> int:
+def update_audio_urls(data, public_base_url: str, allowed_keys: set[str]) -> int:
     updated = 0
     base = public_base_url.rstrip("/")
 
@@ -91,7 +91,7 @@ def update_audio_urls(data, public_base_url: str) -> int:
             for key, value in list(node.items()):
                 if key in AUDIO_FIELDS:
                     object_key = object_key_from_value(value, public_base_url)
-                    if object_key:
+                    if object_key and object_key in allowed_keys:
                         next_value = f"{base}/{object_key}"
                         if node[key] != next_value:
                             node[key] = next_value
@@ -210,6 +210,7 @@ def main():
     parser.add_argument("--enable-r2-dev-url", action="store_true", help="Enable r2.dev public URL for test use.")
     parser.add_argument("--set-cors", action="store_true", help="Apply cloudflare/r2-cors.public-read.json.")
     parser.add_argument("--update-json", action="store_true", help="Rewrite data JSON audio URLs to the public base URL.")
+    parser.add_argument("--allow-json-only", action="store_true", help="Allow --update-json without --upload after files are already uploaded.")
     parser.add_argument("--write-manifest", type=Path, help="Write a local upload manifest JSON.")
     parser.add_argument("--limit-files", type=int, default=0, help="Process only the first N audio refs for a small test run.")
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
@@ -288,12 +289,17 @@ def main():
         if not args.public_base_url:
             print("\nAbort: --update-json requires --public-base-url.")
             return 4
+        if not args.upload and not args.allow_json_only:
+            print("\nAbort: --update-json without --upload is blocked by default.")
+            print("Use --allow-json-only only after confirming the files already exist on Cloudflare.")
+            return 6
+        allowed_keys = {item["key"] for item in plan}
         for data_file in DATA_FILES:
             path = root / data_file
             if not path.exists():
                 continue
             data = load_json(path)
-            count = update_audio_urls(data, args.public_base_url)
+            count = update_audio_urls(data, args.public_base_url, allowed_keys)
             if count:
                 save_json(path, data)
             print(f"Updated {data_file}: {count} URLs")

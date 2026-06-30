@@ -5,6 +5,7 @@ param(
   [switch]$SetupBucket,
   [switch]$Upload,
   [switch]$UpdateJson,
+  [switch]$AllowJsonOnly,
   [switch]$SetCors,
   [switch]$EnableR2DevUrl,
   [int]$MaxMB = 100,
@@ -55,6 +56,9 @@ try {
       throw "-UpdateJson requires -PublicBaseUrl."
     }
     $argsList += "--update-json"
+  }
+  if ($AllowJsonOnly) {
+    $argsList += "--allow-json-only"
   }
   if ($Upload) {
     $argsList += "--upload"
