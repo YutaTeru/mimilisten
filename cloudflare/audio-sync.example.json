@@ -1,0 +1,8 @@
+{
+  "bucket": "mimilisten-audio",
+  "publicBaseUrl": "",
+  "sourceRoot": "C:\\Users\\OwnerPC\\Desktop\\音源集",
+  "maxMB": 100,
+  "maxFiles": 200,
+  "limitFiles": 0
+}

@@ -154,6 +154,10 @@ def content_type_for(path: Path) -> str:
     return "application/octet-stream"
 
 
+def is_valid_public_base_url(value: str) -> bool:
+    return value.startswith("https://") and "<" not in value and ">" not in value
+
+
 def build_plan(root: Path, source_root: Path, public_base_url: str, limit_files: int = 0):
     refs: set[str] = set()
     for data_file in DATA_FILES:
@@ -221,6 +225,11 @@ def main():
     root = project_root()
     source_root = args.source_root.expanduser()
     dry_run = not args.upload
+
+    if args.public_base_url and not is_valid_public_base_url(args.public_base_url):
+        print("\nAbort: --public-base-url must be a real https URL, not a placeholder.")
+        return 7
+
     plan, missing, total_refs = build_plan(root, source_root, args.public_base_url, args.limit_files)
     total_bytes = sum(item["size"] for item in plan)
 

@@ -29,6 +29,26 @@
 
 音源は `C:\Users\OwnerPC\Desktop\音源集` を優先して拾います。アプリのJSONに書かれている音源だけを対象にするので、`q001.mp3` などの重複ファイルやログは入りません。
 
+毎回同じ設定を打たないように、必要ならローカル設定ファイルを作れます。
+
+```powershell
+Copy-Item cloudflare\audio-sync.example.json cloudflare\audio-sync.local.json
+```
+
+`cloudflare\audio-sync.local.json` の `publicBaseUrl` にCloudflareの公開URLを入れます。このファイルはGitHubには入りません。
+
+設定ファイルを明示して診断する場合:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\check-audio-cloudflare-ready.ps1 -Config cloudflare\audio-sync.local.json
+```
+
+設定ファイルを使ってドライランする場合:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -Config cloudflare\audio-sync.local.json
+```
+
 まずは必ずドライランします。
 
 ```powershell
