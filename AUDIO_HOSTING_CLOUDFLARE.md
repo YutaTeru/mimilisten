@@ -47,6 +47,12 @@ powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -Pub
 npx.cmd --yes wrangler login
 ```
 
+Cloudflareへ初めて送る時は、まず3件だけに絞ると安全です。
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\sync-audio-to-cloudflare.ps1 -PublicBaseUrl https://<your-r2-dev-url> -LimitFiles 3 -MaxFiles 3 -MaxMB 5 -Upload
+```
+
 アップロードする場合だけ `--upload` を付けます。
 
 ```powershell

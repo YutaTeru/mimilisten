@@ -154,16 +154,21 @@ def content_type_for(path: Path) -> str:
     return "application/octet-stream"
 
 
-def build_plan(root: Path, source_root: Path, public_base_url: str):
+def build_plan(root: Path, source_root: Path, public_base_url: str, limit_files: int = 0):
     refs: set[str] = set()
     for data_file in DATA_FILES:
         data_path = root / data_file
         if data_path.exists():
             refs.update(collect_audio_refs(load_json(data_path), public_base_url))
 
+    selected_refs = sorted(refs)
+    total_refs = len(selected_refs)
+    if limit_files > 0:
+        selected_refs = selected_refs[:limit_files]
+
     plan = []
     missing = []
-    for object_key in sorted(refs):
+    for object_key in selected_refs:
         source = resolve_source(root, source_root, object_key)
         if source:
             plan.append(
@@ -176,7 +181,7 @@ def build_plan(root: Path, source_root: Path, public_base_url: str):
             )
         else:
             missing.append(object_key)
-    return plan, missing
+    return plan, missing, total_refs
 
 
 def write_manifest(path: Path, plan, public_base_url: str):
@@ -206,6 +211,7 @@ def main():
     parser.add_argument("--set-cors", action="store_true", help="Apply cloudflare/r2-cors.public-read.json.")
     parser.add_argument("--update-json", action="store_true", help="Rewrite data JSON audio URLs to the public base URL.")
     parser.add_argument("--write-manifest", type=Path, help="Write a local upload manifest JSON.")
+    parser.add_argument("--limit-files", type=int, default=0, help="Process only the first N audio refs for a small test run.")
     parser.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_BYTES)
     parser.add_argument("--max-files", type=int, default=DEFAULT_MAX_FILES)
     parser.add_argument("--cache-control", default=DEFAULT_CACHE_CONTROL)
@@ -214,14 +220,17 @@ def main():
     root = project_root()
     source_root = args.source_root.expanduser()
     dry_run = not args.upload
-    plan, missing = build_plan(root, source_root, args.public_base_url)
+    plan, missing, total_refs = build_plan(root, source_root, args.public_base_url, args.limit_files)
     total_bytes = sum(item["size"] for item in plan)
 
     print(f"Project: {root}")
     print(f"Source root: {source_root}")
     print(f"Bucket: {args.bucket}")
     print(f"Mode: {'UPLOAD' if args.upload else 'DRY RUN'}")
-    print(f"Files: {len(plan)} / Total: {total_bytes / 1024 / 1024:.3f} MB")
+    if args.limit_files > 0:
+        print(f"Files: {len(plan)} selected from {total_refs} refs / Total: {total_bytes / 1024 / 1024:.3f} MB")
+    else:
+        print(f"Files: {len(plan)} / Total: {total_bytes / 1024 / 1024:.3f} MB")
     print(f"Safety limits: {args.max_files} files / {args.max_bytes / 1024 / 1024:.3f} MB")
 
     if missing:
