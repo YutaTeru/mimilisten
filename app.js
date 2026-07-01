@@ -74,11 +74,11 @@ const STATUS_LABELS = {
 };
 
 const PRACTICE_ENTRY_LABELS = {
-  heard: "聞こえた英語はどれ？",
-  kana: "カナを予測する",
-  restore: "元の英語に戻す",
-  missing: "消えた音を探す",
-  find: "文の中から探す",
+  heard: "聞こえた音から英語を選ぶ",
+  kana: "文字から音を予測する",
+  restore: "変化した音を英語に戻す",
+  missing: "消えた音を見抜く",
+  find: "文の中で音変化を見つける",
 };
 
 const screens = {
@@ -87,6 +87,7 @@ const screens = {
   answer: document.getElementById("answerScreen"),
   result: document.getElementById("resultScreen"),
   types: document.getElementById("typesScreen"),
+  bundle: document.getElementById("bundleScreen"),
   practice: document.getElementById("practiceScreen"),
   teacher: document.getElementById("teacherScreen"),
 };
@@ -105,10 +106,14 @@ const els = {
   bundleButton: document.getElementById("bundleButton"),
   sentenceBundleCount: document.getElementById("sentenceBundleCount"),
   monologueBundleCount: document.getElementById("monologueBundleCount"),
+  bundleBackButton: document.getElementById("bundleBackButton"),
+  bundleSentenceButton: document.getElementById("bundleSentenceButton"),
+  bundleMonologueButton: document.getElementById("bundleMonologueButton"),
   typesBackButton: document.getElementById("typesBackButton"),
   practiceBackButton: document.getElementById("practiceBackButton"),
   practiceStepBackButton: document.getElementById("practiceStepBackButton"),
   practiceTitle: document.getElementById("practiceTitle"),
+  practiceListenButton: document.getElementById("practiceListenButton"),
   practiceTypeChooser: document.getElementById("practiceTypeChooser"),
   practiceWorkArea: document.getElementById("practiceWorkArea"),
   teacherBackButton: document.getElementById("teacherBackButton"),
@@ -371,7 +376,6 @@ function renderEmbeddedLongListening(item) {
           <p class="panel-label">長めモノローグ</p>
           <h3>${escapeHtml(item.title)}</h3>
         </div>
-        <button class="audio-button compact-audio" type="button" data-practice-long-play>聞く</button>
       </div>
       <div class="long-toggle embedded-toggle" role="group" aria-label="長めモノローグ表示">
         <button class="speed-button ${longDisplayMode === "transcript" ? "is-active" : ""}" type="button" data-practice-long-mode="transcript">全文を見る</button>
@@ -388,7 +392,7 @@ function renderKanaReveal(question) {
   if (!kanaAnswerVisible) {
     return `
       <div class="kana-reveal">
-        <h3>自然な会話ではどう聞こえやすい？</h3>
+        <h3>文字から音を予測する</h3>
         <p class="prediction-prompt">${escapeHtml(question.practiceText || question.answer)}</p>
         <button class="secondary-action compact" type="button" data-kana-reveal>答えを見る</button>
       </div>
@@ -396,7 +400,7 @@ function renderKanaReveal(question) {
   }
   return `
     <div class="kana-reveal">
-      <h3>自然な会話ではどう聞こえやすい？</h3>
+      <h3>文字から音を予測する</h3>
       <p class="prediction-prompt">${escapeHtml(question.practiceText || question.answer)}</p>
       <div class="reveal-answer">
         <span>答え</span>
@@ -487,10 +491,6 @@ function renderPracticeQuiz({ title, promptHtml, choices, answer, question, play
 
   return `
     <div class="practice-mini-quiz" data-practice-quiz>
-      <div class="quiz-heading-row">
-        <h3>${escapeHtml(title)}</h3>
-        ${playUrl ? `<button class="audio-button compact-audio" type="button" data-practice-quiz-play>聞く</button>` : ""}
-      </div>
       ${promptHtml}
       <div class="inline-choice-list">${choiceButtons}</div>
       <p class="practice-inline-feedback" data-practice-feedback hidden></p>
@@ -509,10 +509,10 @@ function renderPracticeFocus(question) {
     chunk: "チャンク",
     sentence: "文",
     monologue: "モノローグ",
-    kana: "カタカナ予測",
-    heard: "聞き取り4択",
-    kanaChoice: "カナ予測",
-    restore: "元の英語",
+    kana: "文字から音",
+    heard: "音から英語",
+    kanaChoice: "文字から音",
+    restore: "音から英語",
     missing: "消えた音",
     find: "文の中",
   };
@@ -534,7 +534,7 @@ function renderPracticeFocus(question) {
 
   if (practiceDisplayMode === "heard") {
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "聞こえた英語はどれ？",
+      title: "聞こえた音から英語を選ぶ",
       promptHtml: "",
       choices: choicesFromQuestion(question),
       answer: question.answer,
@@ -546,7 +546,7 @@ function renderPracticeFocus(question) {
 
   if (practiceDisplayMode === "kanaChoice") {
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "自然な会話ではどう聞こえやすい？",
+      title: "文字から音を予測する",
       promptHtml: `<p class="prediction-prompt">${escapeHtml(question.practiceText || question.answer)}</p>`,
       choices: answerChoicesForKana(question),
       answer: question.answerKana || question.kana,
@@ -559,7 +559,7 @@ function renderPracticeFocus(question) {
   if (practiceDisplayMode === "restore") {
     const prompt = question.answerKana || question.kana || question.visibleForm;
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "この聞こえ方を元の英語に戻すと？",
+      title: "変化した音を英語に戻す",
       promptHtml: `<p class="prediction-prompt kana-prompt">${escapeHtml(prompt)}</p>`,
       choices: answerChoicesForRestore(question),
       answer: question.answer,
@@ -572,7 +572,7 @@ function renderPracticeFocus(question) {
   if (practiceDisplayMode === "missing") {
     const answer = missingSoundAnswer(question);
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "弱くなる、または消えやすい音はどれ？",
+      title: "消えた音を見抜く",
       promptHtml: `<p class="prediction-prompt">${escapeHtml(question.visibleForm)}</p>`,
       choices: answerChoicesForMissing(question),
       answer,
@@ -585,8 +585,8 @@ function renderPracticeFocus(question) {
   if (practiceDisplayMode === "find") {
     const answer = question.targetChunk || question.answer;
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "文の中に入っていた音変化チャンクは？",
-      promptHtml: `<p class="practice-sentence">${escapeHtml(question.sentenceText || "")}</p>`,
+      title: "文の中で音変化を見つける",
+      promptHtml: "",
       choices: answerChoicesForFind(question),
       answer,
       question,
@@ -628,12 +628,24 @@ function setPracticeDisplayMode(mode, shouldPlay = false) {
   const question = currentPracticeQuestion();
   renderPracticeFocus(question);
   if (!shouldPlay) return;
-  const audioUrl = {
-    chunk: question.audioUrl,
-    sentence: question.sentenceAudioUrl,
-    monologue: currentLongListening()?.audioUrl || question.monologueAudioUrl,
-  }[mode];
-  playAudio(audioUrl);
+  playCurrentPracticeAudio();
+}
+
+function currentPracticeAudioUrl() {
+  if (practiceFinalMode) return currentLongListening()?.audioUrl;
+  const question = currentPracticeQuestion();
+  if (!question) return null;
+  if (practiceDisplayMode === "find" || practiceDisplayMode === "sentence") {
+    return question.sentenceAudioUrl || question.audioUrl;
+  }
+  if (practiceDisplayMode === "monologue") {
+    return currentLongListening()?.audioUrl || question.monologueAudioUrl;
+  }
+  return question.audioUrl;
+}
+
+function playCurrentPracticeAudio() {
+  playAudio(currentPracticeAudioUrl());
 }
 
 function normalizePlaybackRate(rate) {
@@ -992,6 +1004,7 @@ function showPracticeChooser() {
   practiceDisplayMode = "chunk";
   practiceFinalMode = false;
   kanaAnswerVisible = false;
+  els.practiceListenButton.hidden = true;
   screens.practice.classList.remove("is-practicing");
   els.practiceTitle.textContent = "練習タイプを選ぶ";
   els.practiceProgressText.textContent = "選択";
@@ -1016,7 +1029,12 @@ function startPracticeMode() {
   showScreen("practice");
 }
 
-function startBundlePractice() {
+function showBundleChooser() {
+  updateHome();
+  showScreen("bundle");
+}
+
+function startBundleSentencePractice() {
   practiceQuestions = practiceReadyQuestions();
   currentPracticeIndex = 0;
   practiceFinalMode = false;
@@ -1027,6 +1045,26 @@ function startBundlePractice() {
   }
   showScreen("practice");
   startPracticeEntry("find");
+}
+
+function startBundleMonologuePractice() {
+  practiceQuestions = practiceReadyQuestions();
+  currentPracticeIndex = 0;
+  practiceEntryMode = "find";
+  practiceDisplayMode = "monologue";
+  practiceFinalMode = true;
+  kanaAnswerVisible = false;
+  screens.practice.classList.add("is-practicing");
+  els.practiceTitle.textContent = "モノローグでまとめて聞く";
+  els.practiceBackButton.textContent = "ホーム";
+  els.practiceStepBackButton.hidden = false;
+  els.practiceTypeChooser.hidden = true;
+  els.practiceWorkArea.hidden = false;
+  els.practiceWorkArea.classList.add("exercise-mode");
+  els.practiceWorkArea.dataset.entryMode = "monologue";
+  renderPracticeFinalMonologue();
+  renderLongListening();
+  showScreen("practice");
 }
 
 function startPracticeEntry(entryMode) {
@@ -1043,6 +1081,7 @@ function startPracticeEntry(entryMode) {
   practiceDisplayMode = defaultPracticeDisplayMode();
   practiceFinalMode = false;
   kanaAnswerVisible = false;
+  els.practiceListenButton.hidden = false;
   screens.practice.classList.add("is-practicing");
   els.practiceTitle.textContent = PRACTICE_ENTRY_LABELS[entryMode] || "練習モード";
   els.practiceBackButton.textContent = "ホーム";
@@ -1061,6 +1100,7 @@ function renderPractice() {
     return;
   }
   const question = currentPracticeQuestion();
+  els.practiceListenButton.hidden = false;
   [els.practiceChunkButton, els.practiceSentenceButton, els.practiceMonoButton, els.practiceKanaButton].forEach((button) => {
     button.disabled = false;
   });
@@ -1081,6 +1121,7 @@ function renderPractice() {
 
 function renderPracticeFinalMonologue() {
   const item = currentLongListening();
+  els.practiceListenButton.hidden = false;
   els.practiceProgressText.textContent = `${practiceQuestions.length + 1}/${practiceQuestions.length + 1}`;
   els.practiceSoundBadge.textContent = "モノローグ";
   els.practiceSoundBadge.className = "sound-badge sound-連結";
@@ -1237,11 +1278,6 @@ function handlePracticeFocusClick(event) {
     playAudio(currentPracticeQuestion()?.audioUrl);
     return;
   }
-  const longPlayButton = event.target.closest("[data-practice-long-play]");
-  if (longPlayButton) {
-    playAudio(currentLongListening()?.audioUrl);
-    return;
-  }
   const longModeButton = event.target.closest("[data-practice-long-mode]");
   if (longModeButton) {
     setLongDisplayMode(longModeButton.dataset.practiceLongMode);
@@ -1340,7 +1376,10 @@ async function init() {
 els.startButton.addEventListener("click", () => startDrill("today"));
 els.practiceButton.addEventListener("click", startPracticeMode);
 els.reviewButton.addEventListener("click", () => startDrill("review"));
-els.bundleButton.addEventListener("click", startBundlePractice);
+els.bundleButton.addEventListener("click", showBundleChooser);
+els.bundleBackButton.addEventListener("click", () => showScreen("home"));
+els.bundleSentenceButton.addEventListener("click", startBundleSentencePractice);
+els.bundleMonologueButton.addEventListener("click", startBundleMonologuePractice);
 els.teacherReviewButton.addEventListener("click", () => {
   document.getElementById("settingsMenu")?.removeAttribute("open");
   renderTeacherReview();
@@ -1376,6 +1415,7 @@ els.practiceBackButton.addEventListener("click", () => {
 });
 els.practiceStepBackButton.addEventListener("click", showPracticeChooser);
 els.playButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl));
+els.practiceListenButton.addEventListener("click", playCurrentPracticeAudio);
 els.replayButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl));
 els.sentenceButton.addEventListener("click", () => playAudio(currentQuestion().sentenceAudioUrl));
 els.nextButton.addEventListener("click", nextQuestion);

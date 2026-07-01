@@ -3,12 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="日本語母語話者が英語リスニングの音変化を練習できるドリルアプリです。" />
+    <meta name="description" content="スクリプトで分かる英語を、音でも分かる英語へ変えるリスニング練習アプリです。" />
     <meta name="theme-color" content="#eef5ff" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-title" content="聞こえない英語ドリル" />
-    <title>聞こえない英語ドリル</title>
+    <meta name="apple-mobile-web-app-title" content="音でわかる英語ドリル" />
+    <title>音でわかる英語ドリル</title>
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="apple-touch-icon" href="./assets/app-icon-1024.png" />
     <link rel="stylesheet" href="./styles.css?v=20260630-2" />
@@ -19,7 +19,7 @@
         <header class="topbar">
           <div class="brand-title">
             <p class="eyebrow">英検リスニング対策</p>
-            <h1 id="appTitle">聞こえない英語ドリル</h1>
+            <h1 id="appTitle">音でわかる英語ドリル</h1>
           </div>
           <div class="topbar-actions">
             <details class="settings-menu" id="settingsMenu">
@@ -70,33 +70,33 @@
 
         <section class="training-panel hero-panel">
           <div class="hero-copy">
-            <p class="panel-label">今日のテスト</p>
-            <h2>聞こえた英語はどれ？</h2>
+            <p class="panel-label">今日の5チャンク</p>
+            <h2>英語が速いんじゃない。音が変わっている。</h2>
             <p id="homeMeta" class="muted" hidden>読み込み中</p>
           </div>
           <img class="mascot mascot-home" src="./assets/guardians/dawnfang.png" alt="" aria-hidden="true" />
-          <button id="startButton" class="primary-action" type="button">今日の5問を始める</button>
+          <button id="startButton" class="primary-action" type="button">5チャンクだけ聞く</button>
         </section>
 
         <div class="home-actions home-bento">
           <button id="practiceButton" class="secondary-action mode-card" type="button">
-            <span>文字あり</span>
-            <strong>練習モード</strong>
+            <span>文字と音</span>
+            <strong>ズレをつなぐ</strong>
             <img class="mode-guardian" src="./assets/guardians/nav-guardian.png" alt="" aria-hidden="true" />
           </button>
           <button id="reviewButton" class="secondary-action mode-card" type="button">
             <span>ミスした音</span>
-            <strong>苦手だけ復習</strong>
+            <strong>音だけ復習</strong>
             <img class="mode-guardian" src="./assets/guardians/mossback.png" alt="" aria-hidden="true" />
           </button>
           <button id="typesButton" class="secondary-action mode-card" type="button">
-            <span>6分類</span>
-            <strong>音変化タイプ</strong>
+            <span>理由を知る</span>
+            <strong>音変化を分類</strong>
             <img class="mode-guardian" src="./assets/guardians/crystalclaw.png" alt="" aria-hidden="true" />
           </button>
           <button id="bundleButton" class="secondary-action mode-card bundle-card" type="button">
             <span>文の固まり</span>
-            <strong>文とモノローグ</strong>
+            <strong>文かモノローグ</strong>
             <small>
               <b id="sentenceBundleCount">0</b>文 /
               <b id="monologueBundleCount">0</b>本
@@ -120,12 +120,11 @@
             <span id="soundBadge" class="sound-badge">連結</span>
             <span id="weaknessLabel" class="weakness-label">it連結</span>
           </div>
-          <h2 id="questionTitle">聞こえた英語はどれ？</h2>
-          <img class="mascot mascot-listening-card" src="./assets/guardians/raptor.png" alt="" aria-hidden="true" />
-
-          <div class="audio-row" aria-label="音声操作">
-            <button id="playButton" class="audio-button" type="button">聞く</button>
-          </div>
+          <h2 id="questionTitle">聞こえた音から英語を選ぶ</h2>
+          <button id="playButton" class="mascot-listen-button mascot-listening-card" type="button" aria-label="音声を聞く">
+            <img class="mascot" src="./assets/guardians/raptor.png" alt="" aria-hidden="true" />
+            <span>Listen</span>
+          </button>
 
           <div id="choiceList" class="choice-list"></div>
         </section>
@@ -181,7 +180,7 @@
           <div id="weaknessList" class="tag-list"></div>
         </section>
         <div class="home-actions">
-          <button id="resultReviewButton" class="secondary-action" type="button">苦手だけ復習する</button>
+          <button id="resultReviewButton" class="secondary-action" type="button">ミスした音だけ復習</button>
           <button id="retryButton" class="primary-action" type="button">もう一度やる</button>
         </div>
       </section>
@@ -190,9 +189,31 @@
         <header class="drill-header">
           <button id="typesBackButton" class="text-button" type="button">ホーム</button>
         </header>
-        <p class="eyebrow">音変化タイプ</p>
-        <h2 id="typesTitle">6つの分類</h2>
+        <p class="eyebrow">聞こえない理由</p>
+        <h2 id="typesTitle">音変化を分類</h2>
         <div id="typeList" class="type-list"></div>
+      </section>
+
+      <section id="bundleScreen" class="screen" aria-labelledby="bundleTitle">
+        <header class="drill-header">
+          <button id="bundleBackButton" class="text-button" type="button">ホーム</button>
+        </header>
+        <p class="eyebrow">文の固まり</p>
+        <h2 id="bundleTitle">どっちで聞く？</h2>
+        <div class="bundle-choice-grid">
+          <button id="bundleSentenceButton" class="secondary-action mode-card bundle-choice-card" type="button">
+            <span>文で探す</span>
+            <strong>文の中で音変化を見つける</strong>
+            <small>短い文の中で、変わった音の塊を探します。</small>
+            <img class="mode-guardian" src="./assets/guardians/raptor.png" alt="" aria-hidden="true" />
+          </button>
+          <button id="bundleMonologueButton" class="secondary-action mode-card bundle-choice-card" type="button">
+            <span>長く聞く</span>
+            <strong>モノローグでまとめて聞く</strong>
+            <small>チャンクが続けて出る長めの音声で慣れます。</small>
+            <img class="mode-guardian" src="./assets/guardians/wild-header.png" alt="" aria-hidden="true" />
+          </button>
+        </div>
       </section>
 
       <section id="practiceScreen" class="screen" aria-labelledby="practiceTitle">
@@ -205,10 +226,13 @@
         </header>
         <div class="practice-title-row">
           <div>
-            <p class="eyebrow">練習モード</p>
+            <p class="eyebrow">文字と音をつなぐ</p>
             <h2 id="practiceTitle">文字と音を一致させる</h2>
           </div>
-          <img class="mascot mascot-practice" src="./assets/guardians/mossback.png" alt="" aria-hidden="true" />
+          <button id="practiceListenButton" class="mascot-listen-button practice-listen-button" type="button" aria-label="音声を聞く" hidden>
+            <img class="mascot mascot-practice" src="./assets/guardians/mossback.png" alt="" aria-hidden="true" />
+            <span>Listen</span>
+          </button>
         </div>
 
         <section id="practiceTypeChooser" class="practice-type-panel">
@@ -216,23 +240,23 @@
           <div class="practice-type-grid">
             <button class="practice-type-card" type="button" data-practice-entry="heard">
               <span>4択</span>
-              <strong>聞こえた英語はどれ？</strong>
+              <strong>聞こえた音から英語を選ぶ</strong>
             </button>
             <button class="practice-type-card" type="button" data-practice-entry="kana">
               <span>音を予測</span>
-              <strong>カナを予測する</strong>
+              <strong>文字から音を予測する</strong>
             </button>
             <button class="practice-type-card" type="button" data-practice-entry="restore">
               <span>逆変換</span>
-              <strong>元の英語に戻す</strong>
+              <strong>変化した音を英語に戻す</strong>
             </button>
             <button class="practice-type-card" type="button" data-practice-entry="missing">
               <span>脱落</span>
-              <strong>消えた音を探す</strong>
+              <strong>消えた音を見抜く</strong>
             </button>
             <button class="practice-type-card" type="button" data-practice-entry="find">
               <span>文の中</span>
-              <strong>文の中から探す</strong>
+              <strong>文の中で音変化を見つける</strong>
             </button>
           </div>
         </section>
@@ -273,7 +297,7 @@
 
         <section class="practice-card" hidden>
           <p class="panel-label">カタカナ予測</p>
-          <h3>自然な会話ではどう聞こえやすい？</h3>
+          <h3>文字から音を予測する</h3>
           <p id="kanaPromptText" class="prediction-prompt"></p>
           <div id="kanaChoiceList" class="choice-list"></div>
           <div id="kanaFeedbackPanel" class="feedback-panel inline-feedback" hidden>
@@ -312,7 +336,7 @@
         <p class="eyebrow">講師レビュー</p>
         <h2 id="teacherTitle">採用する問題を選ぶ</h2>
         <p id="teacherSummary" class="muted">読み込み中</p>
-        <p class="review-note">不採用にした問題は、この端末では今日の5問にも苦手復習にも出ません。音源ファイルは残るので、あとから採用に戻せます。</p>
+        <p class="review-note">不採用にした問題は、この端末では5チャンク練習にもミスした音の復習にも出ません。音源ファイルは残るので、あとから採用に戻せます。</p>
         <div id="teacherList" class="teacher-list"></div>
       </section>
     </main>

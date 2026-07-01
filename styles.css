@@ -222,6 +222,35 @@ summary:focus-visible {
   filter: drop-shadow(0 16px 22px rgba(74, 61, 126, 0.18));
 }
 
+.mascot-listen-button {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primary-dark);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.mascot-listen-button .mascot {
+  width: 100%;
+}
+
+.mascot-listen-button span {
+  position: relative;
+  z-index: 3;
+  padding: 2px 9px;
+  border: 1px solid #bfd2f0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 6px 14px rgba(23, 104, 232, 0.12);
+  font-size: 12px;
+  line-height: 1.2;
+}
+
 .mascot-home {
   position: absolute;
   z-index: 1;
@@ -798,6 +827,11 @@ summary:focus-visible {
   width: 74px;
   flex: 0 0 auto;
   transform: rotate(7deg);
+}
+
+.practice-listen-button {
+  flex: 0 0 auto;
+  width: 88px;
 }
 
 .practice-actions {
@@ -1626,6 +1660,14 @@ body {
   transform: rotate(3deg);
 }
 
+.mascot-listening-card span {
+  transform: rotate(-3deg);
+}
+
+.question-card .choice-list {
+  margin-top: 18px;
+}
+
 .audio-row {
   position: relative;
   z-index: 2;
@@ -1730,6 +1772,14 @@ body {
 .mascot-practice {
   width: 86px;
   transform: rotate(5deg);
+}
+
+.practice-listen-button {
+  width: 94px;
+}
+
+.practice-listen-button .mascot-practice {
+  width: 86px;
 }
 
 .practice-card {
@@ -2021,6 +2071,34 @@ body {
   transform: rotate(-8deg);
 }
 
+.bundle-choice-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.bundle-choice-card {
+  min-height: 124px;
+  padding: 16px;
+}
+
+.bundle-choice-card small {
+  position: relative;
+  z-index: 2;
+  max-width: 78%;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.bundle-choice-card .mode-guardian {
+  right: -4px;
+  bottom: -12px;
+  width: 98px;
+  opacity: 0.18;
+}
+
 .home-stat-card {
   position: relative;
   min-height: 82px;
@@ -2133,19 +2211,6 @@ body {
 .practice-mini-quiz {
   display: grid;
   gap: 8px;
-}
-
-.quiz-heading-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.quiz-heading-row h3 {
-  margin: 0;
-  font-size: 17px;
-  line-height: 1.25;
 }
 
 .inline-choice-list {
