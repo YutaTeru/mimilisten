@@ -8,3 +8,9 @@ dist/
 .env.*
 __pycache__/
 *.pyc
+tools/audio-sync-preview.json
+tools/audio-json-backups/
+tools/_r2-test-download.mp3
+tools/deploy-check-*.png
+cloudflare/audio-sync.local.json
+.wrangler/

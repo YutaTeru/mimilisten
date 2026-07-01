@@ -3,6 +3,9 @@ const LONG_LISTENING_URL = "./data/long-listening.json";
 const STORAGE_KEY = "kikoenai-english-drill-v1";
 const REVIEW_STORAGE_KEY = "kikoenai-english-review-v1";
 const SPEED_STORAGE_KEY = "kikoenai-english-speed-v1";
+const AUDIO_CACHE_NAME = "mimilisten-audio-cache-v1";
+const AUDIO_DB_NAME = "mimilisten-audio-db";
+const AUDIO_STORE_NAME = "audioBlobs";
 const SPEED_MIN = 0.65;
 const SPEED_MAX = 1;
 const SPEED_STEP = 0.05;
@@ -71,18 +74,20 @@ const STATUS_LABELS = {
 };
 
 const PRACTICE_ENTRY_LABELS = {
-  heard: "聞こえた英語はどれ？",
-  kana: "カナを予測する",
-  restore: "元の英語に戻す",
-  missing: "消えた音を探す",
-  find: "文の中から探す",
+  heard: "聞こえた音から英語を選ぶ",
+  kana: "文字から音を予測する",
+  restore: "変化した音を英語に戻す",
+  missing: "消えた音を見抜く",
+  find: "文の中で音変化を見つける",
 };
 
 const screens = {
   home: document.getElementById("homeScreen"),
   drill: document.getElementById("drillScreen"),
+  answer: document.getElementById("answerScreen"),
   result: document.getElementById("resultScreen"),
   types: document.getElementById("typesScreen"),
+  bundle: document.getElementById("bundleScreen"),
   practice: document.getElementById("practiceScreen"),
   teacher: document.getElementById("teacherScreen"),
 };
@@ -98,9 +103,17 @@ const els = {
   resultReviewButton: document.getElementById("resultReviewButton"),
   retryButton: document.getElementById("retryButton"),
   typesButton: document.getElementById("typesButton"),
+  bundleButton: document.getElementById("bundleButton"),
+  sentenceBundleCount: document.getElementById("sentenceBundleCount"),
+  monologueBundleCount: document.getElementById("monologueBundleCount"),
+  bundleBackButton: document.getElementById("bundleBackButton"),
+  bundleSentenceButton: document.getElementById("bundleSentenceButton"),
+  bundleMonologueButton: document.getElementById("bundleMonologueButton"),
   typesBackButton: document.getElementById("typesBackButton"),
   practiceBackButton: document.getElementById("practiceBackButton"),
+  practiceStepBackButton: document.getElementById("practiceStepBackButton"),
   practiceTitle: document.getElementById("practiceTitle"),
+  practiceListenButton: document.getElementById("practiceListenButton"),
   practiceTypeChooser: document.getElementById("practiceTypeChooser"),
   practiceWorkArea: document.getElementById("practiceWorkArea"),
   teacherBackButton: document.getElementById("teacherBackButton"),
@@ -110,7 +123,9 @@ const els = {
   soundBadge: document.getElementById("soundBadge"),
   weaknessLabel: document.getElementById("weaknessLabel"),
   playButton: document.getElementById("playButton"),
-  slowButton: document.getElementById("slowButton"),
+  answerHomeButton: document.getElementById("answerHomeButton"),
+  answerProgressBar: document.getElementById("answerProgressBar"),
+  answerProgressText: document.getElementById("answerProgressText"),
   replayButton: document.getElementById("replayButton"),
   sentenceButton: document.getElementById("sentenceButton"),
   nextButton: document.getElementById("nextButton"),
@@ -178,12 +193,62 @@ let currentPracticeIndex = 0;
 let currentLongIndex = 0;
 let practiceEntryMode = "select";
 let practiceDisplayMode = "chunk";
+let practiceFinalMode = false;
 let selectedSoundTypeIndex = 0;
 let longDisplayMode = "transcript";
 let kanaAnswerVisible = false;
 let currentAnswer = null;
 let sessionResults = [];
-let playbackRate = normalizePlaybackRate(localStorage.getItem(SPEED_STORAGE_KEY));
+let playbackRate = 1;
+const audioObjectUrlCache = new Map();
+
+function openAudioDb() {
+  if (!("indexedDB" in window)) return Promise.resolve(null);
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(AUDIO_DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(AUDIO_STORE_NAME)) {
+        db.createObjectStore(AUDIO_STORE_NAME);
+      }
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function readStoredAudioBlob(absoluteUrl) {
+  const db = await openAudioDb();
+  if (!db) return null;
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(AUDIO_STORE_NAME, "readonly");
+    const request = transaction.objectStore(AUDIO_STORE_NAME).get(absoluteUrl);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error);
+    transaction.oncomplete = () => db.close();
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  });
+}
+
+async function writeStoredAudioBlob(absoluteUrl, blob) {
+  const db = await openAudioDb();
+  if (!db) return;
+  await new Promise((resolve, reject) => {
+    const transaction = db.transaction(AUDIO_STORE_NAME, "readwrite");
+    transaction.objectStore(AUDIO_STORE_NAME).put(blob, absoluteUrl);
+    transaction.oncomplete = () => {
+      db.close();
+      resolve();
+    };
+    transaction.onerror = () => {
+      db.close();
+      reject(transaction.error);
+    };
+  });
+}
 
 function loadStats() {
   try {
@@ -311,7 +376,6 @@ function renderEmbeddedLongListening(item) {
           <p class="panel-label">長めモノローグ</p>
           <h3>${escapeHtml(item.title)}</h3>
         </div>
-        <button class="audio-button compact-audio" type="button" data-practice-long-play>聞く</button>
       </div>
       <div class="long-toggle embedded-toggle" role="group" aria-label="長めモノローグ表示">
         <button class="speed-button ${longDisplayMode === "transcript" ? "is-active" : ""}" type="button" data-practice-long-mode="transcript">全文を見る</button>
@@ -328,7 +392,7 @@ function renderKanaReveal(question) {
   if (!kanaAnswerVisible) {
     return `
       <div class="kana-reveal">
-        <h3>自然な会話ではどう聞こえやすい？</h3>
+        <h3>文字から音を予測する</h3>
         <p class="prediction-prompt">${escapeHtml(question.practiceText || question.answer)}</p>
         <button class="secondary-action compact" type="button" data-kana-reveal>答えを見る</button>
       </div>
@@ -336,7 +400,7 @@ function renderKanaReveal(question) {
   }
   return `
     <div class="kana-reveal">
-      <h3>自然な会話ではどう聞こえやすい？</h3>
+      <h3>文字から音を予測する</h3>
       <p class="prediction-prompt">${escapeHtml(question.practiceText || question.answer)}</p>
       <div class="reveal-answer">
         <span>答え</span>
@@ -427,10 +491,6 @@ function renderPracticeQuiz({ title, promptHtml, choices, answer, question, play
 
   return `
     <div class="practice-mini-quiz" data-practice-quiz>
-      <div class="quiz-heading-row">
-        <h3>${escapeHtml(title)}</h3>
-        ${playUrl ? `<button class="audio-button compact-audio" type="button" data-practice-quiz-play>聞く</button>` : ""}
-      </div>
       ${promptHtml}
       <div class="inline-choice-list">${choiceButtons}</div>
       <p class="practice-inline-feedback" data-practice-feedback hidden></p>
@@ -449,10 +509,10 @@ function renderPracticeFocus(question) {
     chunk: "チャンク",
     sentence: "文",
     monologue: "モノローグ",
-    kana: "カタカナ予測",
-    heard: "聞き取り4択",
-    kanaChoice: "カナ予測",
-    restore: "元の英語",
+    kana: "文字から音",
+    heard: "音から英語",
+    kanaChoice: "文字から音",
+    restore: "音から英語",
     missing: "消えた音",
     find: "文の中",
   };
@@ -474,7 +534,7 @@ function renderPracticeFocus(question) {
 
   if (practiceDisplayMode === "heard") {
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "聞こえた英語はどれ？",
+      title: "聞こえた音から英語を選ぶ",
       promptHtml: "",
       choices: choicesFromQuestion(question),
       answer: question.answer,
@@ -486,7 +546,7 @@ function renderPracticeFocus(question) {
 
   if (practiceDisplayMode === "kanaChoice") {
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "自然な会話ではどう聞こえやすい？",
+      title: "文字から音を予測する",
       promptHtml: `<p class="prediction-prompt">${escapeHtml(question.practiceText || question.answer)}</p>`,
       choices: answerChoicesForKana(question),
       answer: question.answerKana || question.kana,
@@ -499,7 +559,7 @@ function renderPracticeFocus(question) {
   if (practiceDisplayMode === "restore") {
     const prompt = question.answerKana || question.kana || question.visibleForm;
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "この聞こえ方を元の英語に戻すと？",
+      title: "変化した音を英語に戻す",
       promptHtml: `<p class="prediction-prompt kana-prompt">${escapeHtml(prompt)}</p>`,
       choices: answerChoicesForRestore(question),
       answer: question.answer,
@@ -512,7 +572,7 @@ function renderPracticeFocus(question) {
   if (practiceDisplayMode === "missing") {
     const answer = missingSoundAnswer(question);
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "弱くなる、または消えやすい音はどれ？",
+      title: "消えた音を見抜く",
       promptHtml: `<p class="prediction-prompt">${escapeHtml(question.visibleForm)}</p>`,
       choices: answerChoicesForMissing(question),
       answer,
@@ -525,8 +585,8 @@ function renderPracticeFocus(question) {
   if (practiceDisplayMode === "find") {
     const answer = question.targetChunk || question.answer;
     els.practiceFocusContent.innerHTML = renderPracticeQuiz({
-      title: "文の中に入っていた音変化チャンクは？",
-      promptHtml: `<p class="practice-sentence">${highlightText(question.sentenceText, [answer])}</p>`,
+      title: "文の中で音変化を見つける",
+      promptHtml: "",
       choices: answerChoicesForFind(question),
       answer,
       question,
@@ -568,12 +628,24 @@ function setPracticeDisplayMode(mode, shouldPlay = false) {
   const question = currentPracticeQuestion();
   renderPracticeFocus(question);
   if (!shouldPlay) return;
-  const audioUrl = {
-    chunk: question.audioUrl,
-    sentence: question.sentenceAudioUrl,
-    monologue: currentLongListening()?.audioUrl || question.monologueAudioUrl,
-  }[mode];
-  playAudio(audioUrl);
+  playCurrentPracticeAudio();
+}
+
+function currentPracticeAudioUrl() {
+  if (practiceFinalMode) return currentLongListening()?.audioUrl;
+  const question = currentPracticeQuestion();
+  if (!question) return null;
+  if (practiceDisplayMode === "find" || practiceDisplayMode === "sentence") {
+    return question.sentenceAudioUrl || question.audioUrl;
+  }
+  if (practiceDisplayMode === "monologue") {
+    return currentLongListening()?.audioUrl || question.monologueAudioUrl;
+  }
+  return question.audioUrl;
+}
+
+function playCurrentPracticeAudio() {
+  playAudio(currentPracticeAudioUrl());
 }
 
 function normalizePlaybackRate(rate) {
@@ -658,22 +730,67 @@ function updateHome() {
   const stats = loadStats();
   const missCount = Object.values(stats.missesByTag || {}).reduce((sum, value) => sum + value, 0);
   const counts = reviewCounts();
+  const sentenceCount = approvedQuestions.filter((question) => question.sentenceText).length;
   els.approvedCount.textContent = String(approvedQuestions.length);
   els.mistakeCount.textContent = String(missCount);
+  els.sentenceBundleCount.textContent = String(sentenceCount);
+  els.monologueBundleCount.textContent = String(longListeningItems.length);
   els.homeMeta.textContent = `${Math.min(5, approvedQuestions.length)}問 / 採用中のみ`;
   if (els.teacherSummary) {
     els.teacherSummary.textContent = `採用 ${counts.approved} / 保留 ${counts.pending} / 不採用 ${counts.rejected}`;
   }
 }
 
-function playAudio(url, rate, startAt = 0) {
+function objectUrlFromBlob(absoluteUrl, blob) {
+  if (audioObjectUrlCache.has(absoluteUrl)) return audioObjectUrlCache.get(absoluteUrl);
+  const objectUrl = URL.createObjectURL(blob);
+  audioObjectUrlCache.set(absoluteUrl, objectUrl);
+  return objectUrl;
+}
+
+async function cachedAudioUrl(url) {
+  const absoluteUrl = new URL(url, window.location.href).href;
+  if (!absoluteUrl.startsWith("http")) return absoluteUrl;
+  if (audioObjectUrlCache.has(absoluteUrl)) return audioObjectUrlCache.get(absoluteUrl);
+
+  try {
+    const storedBlob = await readStoredAudioBlob(absoluteUrl);
+    if (storedBlob) return objectUrlFromBlob(absoluteUrl, storedBlob);
+  } catch (error) {
+    console.warn("Audio storage read fallback:", error);
+  }
+
+  try {
+    const response = await fetch(absoluteUrl, { mode: "cors", cache: "force-cache" });
+    if (!response.ok) throw new Error(`Audio fetch failed: ${response.status}`);
+    const blob = await response.blob();
+    await writeStoredAudioBlob(absoluteUrl, blob).catch((error) => {
+      console.warn("Audio storage write skipped:", error);
+    });
+    if ("caches" in window) {
+      const cache = await caches.open(AUDIO_CACHE_NAME);
+      await cache.put(absoluteUrl, new Response(blob, {
+        headers: {
+          "Content-Type": response.headers.get("Content-Type") || "audio/mpeg",
+        },
+      })).catch(() => {});
+    }
+    return objectUrlFromBlob(absoluteUrl, blob);
+  } catch (error) {
+    console.warn("Audio cache fallback:", error);
+    return absoluteUrl;
+  }
+}
+
+async function playAudio(url, rate, startAt = 0) {
   if (!url) return;
   const effectiveRate = normalizePlaybackRate(rate ?? currentPlaybackRate());
   const absoluteUrl = new URL(url, window.location.href).href;
+  const playableUrl = await cachedAudioUrl(absoluteUrl);
   const targetStart = Math.max(0, Number(startAt) || 0);
   els.audioPlayer.pause();
-  if (els.audioPlayer.currentSrc !== absoluteUrl) {
-    els.audioPlayer.src = absoluteUrl;
+  if (els.audioPlayer.currentSrc !== playableUrl) {
+    els.audioPlayer.src = playableUrl;
   }
   els.audioPlayer.defaultPlaybackRate = effectiveRate;
   els.audioPlayer.playbackRate = effectiveRate;
@@ -748,6 +865,7 @@ function renderQuestion() {
 function answerQuestion(choice) {
   if (currentAnswer) return;
   const question = currentQuestion();
+  const progress = ((currentIndex + 1) / drillQuestions.length) * 100;
   currentAnswer = choice;
   const correct = Boolean(choice.correct);
   const result = {
@@ -773,7 +891,11 @@ function answerQuestion(choice) {
   els.kanaText.textContent = question.kana;
   els.pointText.textContent = question.point;
   els.sentenceButton.hidden = !question.sentenceAudioUrl;
+  els.nextButton.textContent = currentIndex + 1 >= drillQuestions.length ? "結果へ" : "次へ";
+  els.answerProgressBar.style.width = `${progress}%`;
+  els.answerProgressText.textContent = `${currentIndex + 1}/${drillQuestions.length}`;
   els.feedbackPanel.hidden = false;
+  showScreen("answer");
 }
 
 function recordMiss(question, choice) {
@@ -792,6 +914,7 @@ function nextQuestion() {
   }
   currentIndex += 1;
   renderQuestion();
+  showScreen("drill");
 }
 
 function renderResult() {
@@ -879,9 +1002,14 @@ function defaultPracticeDisplayMode() {
 function showPracticeChooser() {
   practiceEntryMode = "select";
   practiceDisplayMode = "chunk";
+  practiceFinalMode = false;
   kanaAnswerVisible = false;
+  els.practiceListenButton.hidden = true;
+  screens.practice.classList.remove("is-practicing");
   els.practiceTitle.textContent = "練習タイプを選ぶ";
   els.practiceProgressText.textContent = "選択";
+  els.practiceBackButton.textContent = "ホーム";
+  els.practiceStepBackButton.hidden = true;
   els.practiceTypeChooser.hidden = false;
   els.practiceWorkArea.hidden = true;
   els.practiceWorkArea.classList.remove("exercise-mode");
@@ -891,12 +1019,51 @@ function showPracticeChooser() {
 function startPracticeMode() {
   practiceQuestions = practiceReadyQuestions();
   currentPracticeIndex = 0;
+  practiceFinalMode = false;
   if (!practiceQuestions.length) {
     els.homeMeta.textContent = "練習に使える採用中の問題がありません。";
     showScreen("home");
     return;
   }
   showPracticeChooser();
+  showScreen("practice");
+}
+
+function showBundleChooser() {
+  updateHome();
+  showScreen("bundle");
+}
+
+function startBundleSentencePractice() {
+  practiceQuestions = practiceReadyQuestions();
+  currentPracticeIndex = 0;
+  practiceFinalMode = false;
+  if (!practiceQuestions.length) {
+    els.homeMeta.textContent = "練習に使える採用中の問題がありません。";
+    showScreen("home");
+    return;
+  }
+  showScreen("practice");
+  startPracticeEntry("find");
+}
+
+function startBundleMonologuePractice() {
+  practiceQuestions = practiceReadyQuestions();
+  currentPracticeIndex = 0;
+  practiceEntryMode = "find";
+  practiceDisplayMode = "monologue";
+  practiceFinalMode = true;
+  kanaAnswerVisible = false;
+  screens.practice.classList.add("is-practicing");
+  els.practiceTitle.textContent = "モノローグでまとめて聞く";
+  els.practiceBackButton.textContent = "ホーム";
+  els.practiceStepBackButton.hidden = false;
+  els.practiceTypeChooser.hidden = true;
+  els.practiceWorkArea.hidden = false;
+  els.practiceWorkArea.classList.add("exercise-mode");
+  els.practiceWorkArea.dataset.entryMode = "monologue";
+  renderPracticeFinalMonologue();
+  renderLongListening();
   showScreen("practice");
 }
 
@@ -912,8 +1079,13 @@ function startPracticeEntry(entryMode) {
   practiceQuestions = questions;
   currentPracticeIndex = 0;
   practiceDisplayMode = defaultPracticeDisplayMode();
+  practiceFinalMode = false;
   kanaAnswerVisible = false;
+  els.practiceListenButton.hidden = false;
+  screens.practice.classList.add("is-practicing");
   els.practiceTitle.textContent = PRACTICE_ENTRY_LABELS[entryMode] || "練習モード";
+  els.practiceBackButton.textContent = "ホーム";
+  els.practiceStepBackButton.hidden = false;
   els.practiceTypeChooser.hidden = true;
   els.practiceWorkArea.hidden = false;
   els.practiceWorkArea.classList.add("exercise-mode");
@@ -923,7 +1095,15 @@ function startPracticeEntry(entryMode) {
 }
 
 function renderPractice() {
+  if (practiceFinalMode) {
+    renderPracticeFinalMonologue();
+    return;
+  }
   const question = currentPracticeQuestion();
+  els.practiceListenButton.hidden = false;
+  [els.practiceChunkButton, els.practiceSentenceButton, els.practiceMonoButton, els.practiceKanaButton].forEach((button) => {
+    button.disabled = false;
+  });
   els.practiceProgressText.textContent = `${currentPracticeIndex + 1}/${practiceQuestions.length}`;
   els.practiceSoundBadge.textContent = question.soundType;
   els.practiceSoundBadge.className = `sound-badge sound-${question.soundType}`;
@@ -934,11 +1114,54 @@ function renderPractice() {
   els.practicePointText.textContent = question.point;
   renderPracticeFocus(question);
   els.practicePrevButton.disabled = currentPracticeIndex === 0;
-  els.practiceNextButton.disabled = currentPracticeIndex === practiceQuestions.length - 1;
+  els.practiceNextButton.disabled = false;
+  els.practiceNextButton.textContent = currentPracticeIndex === practiceQuestions.length - 1 ? "モノローグへ" : "次へ";
   renderKanaPrediction(question);
 }
 
+function renderPracticeFinalMonologue() {
+  const item = currentLongListening();
+  els.practiceListenButton.hidden = false;
+  els.practiceProgressText.textContent = `${practiceQuestions.length + 1}/${practiceQuestions.length + 1}`;
+  els.practiceSoundBadge.textContent = "モノローグ";
+  els.practiceSoundBadge.className = "sound-badge sound-連結";
+  els.practiceWeaknessLabel.textContent = "総仕上げ";
+  els.practiceAnswerText.textContent = "長めの話で聞く";
+  els.practiceVisibleText.textContent = item?.title || "長めモノローグ";
+  els.practiceKanaText.textContent = "チャンクをまとめて確認";
+  els.practicePointText.textContent = "最後に、練習した音変化が長い文の中で続けて出る形を聞きます。";
+  longDisplayMode = "transcript";
+  els.practiceFocusContent.innerHTML = renderEmbeddedLongListening(item);
+  [els.practiceChunkButton, els.practiceSentenceButton, els.practiceMonoButton, els.practiceKanaButton].forEach((button) => {
+    button.disabled = true;
+  });
+  els.practicePrevButton.disabled = false;
+  els.practiceNextButton.disabled = false;
+  els.practiceNextButton.textContent = "完了";
+  els.kanaFeedbackPanel.hidden = true;
+}
+
 function movePractice(delta) {
+  if (practiceFinalMode) {
+    if (delta < 0) {
+      practiceFinalMode = false;
+      currentPracticeIndex = Math.max(0, practiceQuestions.length - 1);
+      practiceDisplayMode = defaultPracticeDisplayMode();
+      kanaAnswerVisible = false;
+      renderPractice();
+      return;
+    }
+    updateHome();
+    showScreen("home");
+    return;
+  }
+  if (delta > 0 && currentPracticeIndex === practiceQuestions.length - 1) {
+    practiceFinalMode = true;
+    practiceDisplayMode = "monologue";
+    kanaAnswerVisible = false;
+    renderPracticeFinalMonologue();
+    return;
+  }
   currentPracticeIndex = Math.min(Math.max(currentPracticeIndex + delta, 0), practiceQuestions.length - 1);
   practiceDisplayMode = defaultPracticeDisplayMode();
   kanaAnswerVisible = false;
@@ -1039,7 +1262,7 @@ function handlePracticeFocusClick(event) {
     if (!isCorrect) quizAnswerButton.classList.add("is-wrong");
     const feedback = quizRoot.querySelector("[data-practice-feedback]");
     feedback.hidden = false;
-    feedback.textContent = isCorrect ? "正解です。音の変化を見て確認しましょう。" : "もう一歩。正解の形と聞こえ方を確認しましょう。";
+    feedback.textContent = isCorrect ? "正解" : "正解と聞こえ方を確認";
     const detail = quizRoot.querySelector("[data-practice-detail]");
     if (detail) detail.hidden = false;
     return;
@@ -1053,11 +1276,6 @@ function handlePracticeFocusClick(event) {
   const kanaPlayButton = event.target.closest("[data-kana-play]");
   if (kanaPlayButton) {
     playAudio(currentPracticeQuestion()?.audioUrl);
-    return;
-  }
-  const longPlayButton = event.target.closest("[data-practice-long-play]");
-  if (longPlayButton) {
-    playAudio(currentLongListening()?.audioUrl);
     return;
   }
   const longModeButton = event.target.closest("[data-practice-long-mode]");
@@ -1158,6 +1376,10 @@ async function init() {
 els.startButton.addEventListener("click", () => startDrill("today"));
 els.practiceButton.addEventListener("click", startPracticeMode);
 els.reviewButton.addEventListener("click", () => startDrill("review"));
+els.bundleButton.addEventListener("click", showBundleChooser);
+els.bundleBackButton.addEventListener("click", () => showScreen("home"));
+els.bundleSentenceButton.addEventListener("click", startBundleSentencePractice);
+els.bundleMonologueButton.addEventListener("click", startBundleMonologuePractice);
 els.teacherReviewButton.addEventListener("click", () => {
   document.getElementById("settingsMenu")?.removeAttribute("open");
   renderTeacherReview();
@@ -1183,16 +1405,17 @@ els.backHomeButton.addEventListener("click", () => {
   updateHome();
   showScreen("home");
 });
-els.practiceBackButton.addEventListener("click", () => {
-  if (!els.practiceWorkArea.hidden) {
-    showPracticeChooser();
-    return;
-  }
+els.answerHomeButton.addEventListener("click", () => {
   updateHome();
   showScreen("home");
 });
+els.practiceBackButton.addEventListener("click", () => {
+  updateHome();
+  showScreen("home");
+});
+els.practiceStepBackButton.addEventListener("click", showPracticeChooser);
 els.playButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl));
-els.slowButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl, Math.min(currentPlaybackRate(), 0.75)));
+els.practiceListenButton.addEventListener("click", playCurrentPracticeAudio);
 els.replayButton.addEventListener("click", () => playAudio(currentQuestion().audioUrl));
 els.sentenceButton.addEventListener("click", () => playAudio(currentQuestion().sentenceAudioUrl));
 els.nextButton.addEventListener("click", nextQuestion);

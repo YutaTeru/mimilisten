@@ -7,7 +7,7 @@
     "qualityStatus": "unchecked",
     "soundType": "連結",
     "weaknessTag": "it連結",
-    "audioUrl": "audio/chunks/round-2/chunk001.mp3",
+    "audioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/chunks/round-2/chunk001.mp3",
     "answer": "pick it up",
     "visibleForm": "pikiɾup",
     "kana": "ピキラップ",
@@ -36,8 +36,8 @@
         "reason": "it / them を聞き違えている"
       }
     ],
-    "sentenceAudioUrl": "audio/sentences/round-2/sentence002.mp3",
-    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "sentenceAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/sentences/round-2/sentence002.mp3",
+    "monologueAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/monologues/round-2/monologue001.mp3",
     "practiceText": "pick it up",
     "sentenceText": "Could you pick it up after school?",
     "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
@@ -62,7 +62,7 @@
     "qualityStatus": "unchecked",
     "soundType": "連結",
     "weaknessTag": "it連結",
-    "audioUrl": "audio/chunks/round-2/chunk002.mp3",
+    "audioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/chunks/round-2/chunk002.mp3",
     "answer": "fill it out",
     "visibleForm": "filiɾout",
     "kana": "フィリラウト",
@@ -91,8 +91,8 @@
         "reason": "it / them を聞き違えている"
       }
     ],
-    "sentenceAudioUrl": "audio/sentences/round-2/sentence003.mp3",
-    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "sentenceAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/sentences/round-2/sentence003.mp3",
+    "monologueAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/monologues/round-2/monologue001.mp3",
     "practiceText": "fill it out",
     "sentenceText": "Please fill it out before you leave.",
     "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
@@ -117,7 +117,7 @@
     "qualityStatus": "unchecked",
     "soundType": "同化",
     "weaknessTag": "you同化",
-    "audioUrl": "audio/chunks/round-2/chunk003.mp3",
+    "audioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/chunks/round-2/chunk003.mp3",
     "answer": "did you check?",
     "visibleForm": "didʒə CHECK?",
     "kana": "ディジャ チェック",
@@ -146,8 +146,8 @@
         "reason": "did you / would you のつながりを聞き違えている"
       }
     ],
-    "sentenceAudioUrl": "audio/sentences/round-2/sentence004.mp3",
-    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "sentenceAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/sentences/round-2/sentence004.mp3",
+    "monologueAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/monologues/round-2/monologue001.mp3",
     "practiceText": "did you check?",
     "sentenceText": "Did you check it again?",
     "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
@@ -172,7 +172,7 @@
     "qualityStatus": "unchecked",
     "soundType": "弱化",
     "weaknessTag": "to弱化",
-    "audioUrl": "audio/chunks/round-2/chunk004.mp3",
+    "audioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/chunks/round-2/chunk004.mp3",
     "answer": "have to finish",
     "visibleForm": "haftə FINish",
     "kana": "ハフタ フィニッシュ",
@@ -201,8 +201,8 @@
         "reason": "have / has の弱い差を聞き違えている"
       }
     ],
-    "sentenceAudioUrl": "audio/sentences/round-2/sentence001.mp3",
-    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "sentenceAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/sentences/round-2/sentence001.mp3",
+    "monologueAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/monologues/round-2/monologue001.mp3",
     "practiceText": "have to finish",
     "sentenceText": "I have to finish this today.",
     "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
@@ -227,7 +227,7 @@
     "qualityStatus": "unchecked",
     "soundType": "脱落",
     "weaknessTag": "t脱落",
-    "audioUrl": "audio/chunks/round-2/chunk005.mp3",
+    "audioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/chunks/round-2/chunk005.mp3",
     "answer": "next time",
     "visibleForm": "nex(t) TIME",
     "kana": "ネクス タイム",
@@ -256,8 +256,8 @@
         "reason": "next / last の子音のまとまりを聞き違えている"
       }
     ],
-    "sentenceAudioUrl": "audio/sentences/round-2/sentence005.mp3",
-    "monologueAudioUrl": "audio/monologues/round-2/monologue001.mp3",
+    "sentenceAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/sentences/round-2/sentence005.mp3",
+    "monologueAudioUrl": "https://pub-6e10f4d8b90b42c79b09bec4ee876a01.r2.dev/monologues/round-2/monologue001.mp3",
     "practiceText": "next time",
     "sentenceText": "We can talk about it next time.",
     "monologueText": "I have to help my friend with the club form tomorrow. First, she will fill it out at home. Then I'll pick it up after school and check it again with our teacher. If everything is OK, I'll send it in online. After that, I need to bring it over to the club room.",
