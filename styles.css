@@ -1665,7 +1665,7 @@ body {
 }
 
 .question-card .choice-list {
-  margin-top: 18px;
+  margin-top: 68px;
 }
 
 .audio-row {
@@ -1890,6 +1890,10 @@ body {
 
   .mascot-listening-card {
     width: 94px;
+  }
+
+  .question-card .choice-list {
+    margin-top: 76px;
   }
 }
 
