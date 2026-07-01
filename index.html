@@ -53,6 +53,16 @@
                   <span>採用管理</span>
                   <strong>講師レビュー</strong>
                 </button>
+                <section class="status-strip settings-stat-card" aria-label="学習データ">
+                  <div>
+                    <span class="stat-number" id="approvedCount">0</span>
+                    <span class="stat-label">採用済み</span>
+                  </div>
+                  <div>
+                    <span class="stat-number" id="mistakeCount">0</span>
+                    <span class="stat-label">苦手記録</span>
+                  </div>
+                </section>
               </div>
             </details>
           </div>
@@ -62,7 +72,7 @@
           <div class="hero-copy">
             <p class="panel-label">今日のテスト</p>
             <h2>聞こえた英語はどれ？</h2>
-            <p id="homeMeta" class="muted">読み込み中</p>
+            <p id="homeMeta" class="muted" hidden>読み込み中</p>
           </div>
           <img class="mascot mascot-home" src="./assets/guardians/dawnfang.png" alt="" aria-hidden="true" />
           <button id="startButton" class="primary-action" type="button">今日の5問を始める</button>
@@ -84,17 +94,15 @@
             <strong>音変化タイプ</strong>
             <img class="mode-guardian" src="./assets/guardians/crystalclaw.png" alt="" aria-hidden="true" />
           </button>
-          <section class="status-strip home-stat-card" aria-label="学習データ">
-            <img class="mode-guardian stat-guardian" src="./assets/guardians/tidefin.png" alt="" aria-hidden="true" />
-            <div>
-              <span class="stat-number" id="approvedCount">0</span>
-              <span class="stat-label">採用済み</span>
-            </div>
-            <div>
-              <span class="stat-number" id="mistakeCount">0</span>
-              <span class="stat-label">苦手記録</span>
-            </div>
-          </section>
+          <button id="bundleButton" class="secondary-action mode-card bundle-card" type="button">
+            <span>文の固まり</span>
+            <strong>文とモノローグ</strong>
+            <small>
+              <b id="sentenceBundleCount">0</b>文 /
+              <b id="monologueBundleCount">0</b>本
+            </small>
+            <img class="mode-guardian" src="./assets/guardians/tidefin.png" alt="" aria-hidden="true" />
+          </button>
         </div>
       </section>
 

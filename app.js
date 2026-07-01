@@ -102,6 +102,9 @@ const els = {
   resultReviewButton: document.getElementById("resultReviewButton"),
   retryButton: document.getElementById("retryButton"),
   typesButton: document.getElementById("typesButton"),
+  bundleButton: document.getElementById("bundleButton"),
+  sentenceBundleCount: document.getElementById("sentenceBundleCount"),
+  monologueBundleCount: document.getElementById("monologueBundleCount"),
   typesBackButton: document.getElementById("typesBackButton"),
   practiceBackButton: document.getElementById("practiceBackButton"),
   practiceStepBackButton: document.getElementById("practiceStepBackButton"),
@@ -715,8 +718,11 @@ function updateHome() {
   const stats = loadStats();
   const missCount = Object.values(stats.missesByTag || {}).reduce((sum, value) => sum + value, 0);
   const counts = reviewCounts();
+  const sentenceCount = approvedQuestions.filter((question) => question.sentenceText).length;
   els.approvedCount.textContent = String(approvedQuestions.length);
   els.mistakeCount.textContent = String(missCount);
+  els.sentenceBundleCount.textContent = String(sentenceCount);
+  els.monologueBundleCount.textContent = String(longListeningItems.length);
   els.homeMeta.textContent = `${Math.min(5, approvedQuestions.length)}問 / 採用中のみ`;
   if (els.teacherSummary) {
     els.teacherSummary.textContent = `採用 ${counts.approved} / 保留 ${counts.pending} / 不採用 ${counts.rejected}`;
@@ -1008,6 +1014,19 @@ function startPracticeMode() {
   }
   showPracticeChooser();
   showScreen("practice");
+}
+
+function startBundlePractice() {
+  practiceQuestions = practiceReadyQuestions();
+  currentPracticeIndex = 0;
+  practiceFinalMode = false;
+  if (!practiceQuestions.length) {
+    els.homeMeta.textContent = "練習に使える採用中の問題がありません。";
+    showScreen("home");
+    return;
+  }
+  showScreen("practice");
+  startPracticeEntry("find");
 }
 
 function startPracticeEntry(entryMode) {
@@ -1321,6 +1340,7 @@ async function init() {
 els.startButton.addEventListener("click", () => startDrill("today"));
 els.practiceButton.addEventListener("click", startPracticeMode);
 els.reviewButton.addEventListener("click", () => startDrill("review"));
+els.bundleButton.addEventListener("click", startBundlePractice);
 els.teacherReviewButton.addEventListener("click", () => {
   document.getElementById("settingsMenu")?.removeAttribute("open");
   renderTeacherReview();

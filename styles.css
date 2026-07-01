@@ -1935,6 +1935,25 @@ body {
   font-size: 15px;
 }
 
+.settings-stat-card {
+  margin: 0;
+  border: 1px solid #d8e4f5;
+  border-radius: var(--control-radius);
+  box-shadow: none;
+}
+
+.settings-stat-card > div {
+  padding: 10px 12px;
+}
+
+.settings-stat-card .stat-number {
+  font-size: 21px;
+}
+
+.settings-stat-card .stat-label {
+  font-size: 11px;
+}
+
 .home-bento {
   grid-template-columns: 1fr 1fr;
 }
@@ -1949,7 +1968,8 @@ body {
 }
 
 .mode-card span,
-.mode-card strong {
+.mode-card strong,
+.mode-card small {
   z-index: 2;
 }
 
@@ -1979,6 +1999,26 @@ body {
   right: -3px;
   width: 64px;
   opacity: 0.17;
+}
+
+.bundle-card small {
+  position: relative;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.bundle-card small b {
+  color: var(--primary-dark);
+  font-size: 17px;
+}
+
+.bundle-card .mode-guardian {
+  right: -8px;
+  bottom: -17px;
+  width: 86px;
+  opacity: 0.14;
+  transform: rotate(-8deg);
 }
 
 .home-stat-card {
@@ -2084,13 +2124,10 @@ body {
   padding: 12px;
 }
 
-#practiceWorkArea.exercise-mode .question-meta {
-  margin-bottom: 8px;
-}
-
-#practiceWorkArea.exercise-mode #practiceAnswerText {
-  margin-bottom: 8px;
-  font-size: 17px;
+#practiceWorkArea.exercise-mode .question-meta,
+#practiceWorkArea.exercise-mode #practiceAnswerText,
+#practiceWorkArea.exercise-mode #practiceFocusLabel {
+  display: none;
 }
 
 .practice-mini-quiz {
