@@ -116,13 +116,21 @@
           <img class="mascot mascot-listening-card" src="./assets/guardians/raptor.png" alt="" aria-hidden="true" />
 
           <div class="audio-row" aria-label="音声操作">
-            <button id="playButton" class="audio-button" type="button">通常</button>
-            <button id="slowButton" class="audio-button subtle" type="button">ゆっくり</button>
+            <button id="playButton" class="audio-button" type="button">聞く</button>
           </div>
 
           <div id="choiceList" class="choice-list"></div>
         </section>
+      </section>
 
+      <section id="answerScreen" class="screen answer-screen" aria-labelledby="feedbackTitle">
+        <header class="drill-header">
+          <button id="answerHomeButton" class="text-button" type="button">ホーム</button>
+          <div class="progress-wrap" aria-label="進捗">
+            <div id="answerProgressBar" class="progress-bar"></div>
+          </div>
+          <span id="answerProgressText" class="progress-text">1/5</span>
+        </header>
         <section id="feedbackPanel" class="feedback-panel" hidden>
           <img class="mascot mascot-feedback" src="./assets/guardians/crystalclaw.png" alt="" aria-hidden="true" />
           <div class="feedback-title" id="feedbackTitle">正解</div>
